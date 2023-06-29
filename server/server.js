@@ -5,12 +5,13 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const User = require("./models/User");
 const Race = require("./models/Competition");
+const Comps = require("./models/Onlycomps");
 const jwt = require("jsonwebtoken");
 const requireAuth = require("./middlewares/requireAuth");
 
 //TOKEN CREATION
-const createToken = (_id) => {
-  return jwt.sign({ _id }, process.env.SECRET, {
+const createToken = (_id, isAdmin) => {
+  return jwt.sign({ _id, isAdmin }, process.env.SECRET, {
     expiresIn: "3d",
   });
 };
@@ -49,7 +50,7 @@ app.post("/belepes", async (req, res) => {
   try {
     const { email, jelszo } = req.body;
     const user = await User.login(email, jelszo);
-    const token = createToken(user._id);
+    const token = createToken(user._id, user.isAdmin);
     console.log(email, token);
     res.status(200).json({ msg: "Sikeres belépés", email, token });
   } catch (error) {
@@ -60,7 +61,7 @@ app.post("/belepes", async (req, res) => {
 app.use(requireAuth);
 
 //RACE
-app.get("/verseny", async (req, res) => {
+app.get("/eredmeny", async (req, res) => {
   try {
     const race = await Race.find({});
     res.status(200).json({ msg: race });
@@ -69,7 +70,7 @@ app.get("/verseny", async (req, res) => {
   }
 });
 
-app.post("/verseny", async (req, res) => {
+app.post("/eredmeny", async (req, res) => {
   try {
     const {
       nev,
@@ -80,6 +81,7 @@ app.post("/verseny", async (req, res) => {
       vforma,
       helyezes,
       tanulok,
+      osztaly,
       tanarok,
     } = req.body;
     console.log(req.body);
@@ -92,6 +94,7 @@ app.post("/verseny", async (req, res) => {
       vforma,
       helyezes,
       tanulok,
+      osztaly,
       tanarok,
     });
     await newRace.save();
@@ -101,7 +104,7 @@ app.post("/verseny", async (req, res) => {
   }
 });
 
-app.put("/verseny", async (req, res) => {
+app.put("/eredmeny", async (req, res) => {
   try {
     const {
       paramId,
@@ -113,6 +116,7 @@ app.put("/verseny", async (req, res) => {
       vforma,
       helyezes,
       tanulok,
+      osztaly,
       tanarok,
     } = req.body;
 
@@ -127,6 +131,7 @@ app.put("/verseny", async (req, res) => {
         vforma,
         helyezes,
         tanulok,
+        osztaly,
         tanarok,
       },
       { new: true }
@@ -137,7 +142,7 @@ app.put("/verseny", async (req, res) => {
   }
 });
 
-app.delete("/verseny", async (req, res) => {
+app.delete("/eredmeny", async (req, res) => {
   try {
     const body = req.body;
     const toroltAdat = await Race.findOneAndDelete({ _id: body.id }).exec();
@@ -149,6 +154,37 @@ app.delete("/verseny", async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ msg: "Valami hiba történt!" });
+  }
+});
+
+app.get("/verseny", async (req, res) => {
+  try {
+    const comps = await Comps.find({});
+    res.status(200).json({ comps });
+  } catch (error) {
+    res.status(500).json({ msg: "Valami hiba történt" + error.message });
+  }
+});
+
+app.post("/verseny", async (req, res) => {
+  try {
+    const { verseny } = req.body;
+    const newComp = new Comps({
+      verseny,
+    });
+    await newComp.save();
+    res.status(200).json({ msg: "Sikeres verseny létrehozás!" });
+  } catch (error) {
+    res.status(500).json({ msg: "Valami hiba történt" + error.message });
+  }
+});
+
+app.get("/isAdmin", async (req, res) => {
+  try {
+    const isAdmin = res.locals.isAdmin;
+    res.status(200).json({ isAdmin });
+  } catch (error) {
+    res.status(500).json({ msg: "Valami hiba történt" + error.message });
   }
 });
 

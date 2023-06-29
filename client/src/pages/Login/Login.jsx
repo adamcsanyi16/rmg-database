@@ -46,7 +46,7 @@ const Login = () => {
   };
 
   return (
-    <div className="form-container">
+    <div className="forms-container">
       <form onSubmit={belepes}>
         <h2>Belépés</h2>
         <div className="form-row">

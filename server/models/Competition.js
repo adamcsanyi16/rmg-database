@@ -24,19 +24,23 @@ const compSchema = new mongoose.Schema(
     },
     vforma: {
       type: String,
-      required: false,
+      required: true,
     },
     helyezes: {
       type: String,
-      required: false,
+      required: true,
     },
     tanulok: {
       type: String,
-      required: false,
+      required: true,
+    },
+    osztaly: {
+      type: String,
+      required: true,
     },
     tanarok: {
       type: String,
-      required: false,
+      required: true,
     },
   },
   { timestamps: true }

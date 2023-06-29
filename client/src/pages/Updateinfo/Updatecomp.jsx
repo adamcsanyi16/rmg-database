@@ -13,6 +13,7 @@ function Updatecomp() {
   const [vforma, setVforma] = useState("");
   const [helyezes, setHelyezes] = useState("");
   const [tanulok, setTanulok] = useState("");
+  const [osztaly, setOsztaly] = useState("");
   const [tanarok, setTanarok] = useState("");
   const [success, setSuccess] = useState(null);
   const [error, setError] = useState(null);
@@ -22,7 +23,7 @@ function Updatecomp() {
   useEffect(() => {
     const data = async () => {
       try {
-        const adat = await fetch("http://localhost:3500/verseny", {
+        const adat = await fetch("http://localhost:3500/eredmeny", {
           headers: {
             Authorization: `Bearer ${user.token}`,
           },
@@ -42,6 +43,7 @@ function Updatecomp() {
           setVforma(competitionVal[0].vforma);
           setHelyezes(competitionVal[0].helyezes);
           setTanulok(competitionVal[0].tanulok);
+          setOsztaly(competitionVal[0].osztaly);
           setTanarok(competitionVal[0].tanarok);
         } else {
           const jsonData = await adat.json();
@@ -72,6 +74,7 @@ function Updatecomp() {
       vforma,
       helyezes,
       tanulok,
+      osztaly,
       tanarok,
     };
 
@@ -80,7 +83,7 @@ function Updatecomp() {
       setError(null);
       setSuccess(null);
 
-      const adat = await fetch("http://localhost:3500/verseny", {
+      const adat = await fetch("http://localhost:3500/eredmeny", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -115,6 +118,7 @@ function Updatecomp() {
     setVforma("");
     setHelyezes("");
     setTanulok("");
+    setOsztaly("");
     setTanarok("");
     setError(null);
 
@@ -259,6 +263,15 @@ function Updatecomp() {
             value={tanulok}
             className="input"
             onChange={(e) => setTanulok(e.target.value)}
+          />
+        </div>
+        <div className="form-row">
+          <input
+            type="text"
+            placeholder="Tanuló(k) osztálya"
+            value={osztaly}
+            className="input"
+            onChange={(e) => setOsztaly(e.target.value)}
           />
         </div>
         <div className="form-row">

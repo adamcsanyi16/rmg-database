@@ -14,6 +14,7 @@ import Registration from "./pages/Registration/Registration";
 import Addcomp from "./pages/Addinfo/Addcomp";
 import Results from "./pages/Info/Results";
 import Updatecomp from "./pages/Updateinfo/Updatecomp";
+import Addraces from "./pages/Addinfo/Addraces";
 
 function App() {
   const { user } = useAuthContext();
@@ -34,8 +35,12 @@ function App() {
             element={!user ? <Login /> : <Navigate to="/eredmenyek" />}
           />
           <Route
-            path="/versenyfelvetel"
+            path="/eredmenyekfelvetel"
             element={user ? <Addcomp /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/versenyfelvetel"
+            element={user ? <Addraces /> : <Navigate to="/login" />}
           />
           <Route
             path="/eredmenyek/:id"

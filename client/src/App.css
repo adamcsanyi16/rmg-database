@@ -13,9 +13,6 @@ body {
 /*NAVBAR*/
 .navbar-container {
   background-image: linear-gradient(#716826c9, #998d33c9, #b9ab44c9);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   padding: 1em;
 }
 
@@ -93,13 +90,24 @@ nav {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+}
+.forms-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 150px;
 }
 
 .form-container h2 {
   text-align: center;
   color: #4d471bc9;
   margin-bottom: 20px;
+}
+
+.form-container p {
+  text-align: center;
+  color: #4d471bc9;
+  font-size: 14px;
 }
 
 form {
@@ -113,6 +121,7 @@ form {
 
 .addcomp {
   margin-top: 100px;
+  margin-bottom: 150px;
 }
 
 .form-row {
@@ -250,10 +259,16 @@ button:active {
   gap: 5px;
   margin-top: 20px;
 }
+
+
 /*ERROR AND SUCCESS*/
 .error {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border: #e60000 solid 1px;
   color: #e60000;
+  max-width: 500px;
   background-color: #e6000016;
   padding: 10px 20px;
   margin-top: 15px;
@@ -266,8 +281,12 @@ button:active {
 }
 
 .success {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border: #00e60c solid 1px;
   color: #00d80b;
+  max-width: 500px;
   background-color: #00e60c1a;
   padding: 10px 20px;
   margin-top: 15px;
@@ -292,16 +311,20 @@ button:active {
 }
 
 /*EREDMENYEK*/
-.table-container input {
+.sorting-container input {
   background-color: whitesmoke;
   border: none;
-  margin: 1rem;
-  padding: 1rem;
+  margin: 0.3rem;
+  padding: 0.8rem;
   font-size: 1rem;
   width: 300px;
   border-radius: 1rem;
   color: #4d471bc9;
   box-shadow: 0 0.4rem #b9ab444d;
+}
+
+.sorting-container input:focus {
+  outline-color: #998d33c9;
 }
 
 .btn {
@@ -330,10 +353,6 @@ button:active {
 .btn:hover .icon path {
   fill: #ffffff;
   stroke: none;
-}
-
-.table-container input:focus {
-  outline-color: #998d33c9;
 }
 
 .allinfo {
@@ -392,4 +411,26 @@ button:active {
 
 h2 {
   color: #4d471bc9;
+}
+
+/*TOGGLEPAGES*/
+.toggle-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.toggle-buttons button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2em;
+  height: 2em;
+  width: 2em;
+  margin: 10px 10px 40px 10px;
+}
+
+.toggle-buttons p {
+  font-size: 0.8em;
 }
