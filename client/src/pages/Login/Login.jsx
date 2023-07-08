@@ -67,6 +67,9 @@ const Login = () => {
             onChange={(e) => setJelszo(e.target.value)}
           />
         </div>
+        <div className="forgot-password">
+          <Link to={"/valtoztat"}>Elfejtettem a jelszavam</Link>
+        </div>
         <div className="button-container">
           <Link to={"/register"}>Még nincs fiókod? Regisztrálj!</Link>
           <button type="submit" disabled={isLoading}>

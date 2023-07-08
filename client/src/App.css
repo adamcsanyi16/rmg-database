@@ -14,21 +14,27 @@ body {
 .navbar-container {
   background-image: linear-gradient(#716826c9, #998d33c9, #b9ab44c9);
   padding: 1em;
-}
-
-nav {
-  display: flex;
-  align-items: center;
+  margin: 0.2rem;
+  display: grid;
+  grid-template-columns: 0.2fr 2.8fr;
+  border-radius: 1rem;
+  -webkit-border-radius: 1rem;
+  -moz-border-radius: 1rem;
+  -ms-border-radius: 1rem;
+  -o-border-radius: 1rem;
 }
 
 .logo {
   color: whitesmoke;
-  font-size: 25px;
+  font-size: 28px;
+  font-weight: 500;
+  letter-spacing: 5px;
   text-decoration: none;
   margin-right: 20px;
 }
 
 .navbar-container a {
+  margin-left: 5px;
   color: whitesmoke;
   text-decoration: none;
 }
@@ -253,6 +259,14 @@ button:active {
   color: #4d471bc9;
 }
 
+.button-container a:hover {
+  text-decoration: underline;
+  font-size: 14px;
+  margin-left: auto;
+  margin-right: auto;
+  color: #4d471b;
+}
+
 .button-row {
   display: grid;
   grid-template-columns: 50% 50%;
@@ -260,6 +274,25 @@ button:active {
   margin-top: 20px;
 }
 
+.forgot-password {
+  margin-top: 20px;
+  margin-bottom: -10px;
+  display: flex;
+  justify-content: end;
+}
+.forgot-password a {
+  text-decoration: underline;
+  color: #4d471bc9;
+  font-size: 12px;
+  margin-right: 0.45rem;
+}
+
+.forgot-password a:hover {
+  text-decoration: underline;
+  color: #4d471b;
+  font-size: 12px;
+  margin-right: 0.45rem;
+}
 
 /*ERROR AND SUCCESS*/
 .error {
@@ -286,6 +319,7 @@ button:active {
   align-items: center;
   border: #00e60c solid 1px;
   color: #00d80b;
+  font-size: 15px;
   max-width: 500px;
   background-color: #00e60c1a;
   padding: 10px 20px;
@@ -298,6 +332,18 @@ button:active {
   -o-border-radius: 1rem;
 }
 
+.success a {
+  text-decoration: underline;
+  color: #00d80b;
+  gap: 5px;
+}
+
+.success a:hover {
+  text-decoration: underline;
+  color: #008006;
+  gap: 5px;
+}
+
 /*LOGOUT*/
 .logout-container {
   display: flex;
@@ -308,6 +354,7 @@ button:active {
 .filter {
   display: flex;
   justify-content: right;
+  margin-top: 3rem;
 }
 
 /*EREDMENYEK*/
@@ -351,6 +398,43 @@ button:active {
 }
 
 .btn:hover .icon path {
+  fill: #ffffff;
+  stroke: none;
+}
+.back-to-top {
+  padding: 1em;
+  font-size: 14px;
+  letter-spacing: 2.5px;
+  font-weight: 500;
+  color: #4d471bc9;
+  background-color: whitesmoke;
+  border: none;
+  border-radius: 5em;
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease 0s;
+  cursor: pointer;
+  outline: none;
+  -webkit-border-radius: 5em;
+  -moz-border-radius: 5em;
+  -ms-border-radius: 5em;
+  -o-border-radius: 5em;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  opacity: 0.7;
+  z-index: 9999;
+  display: none;
+}
+
+.back-to-top.show {
+  display: block;
+}
+
+.back-to-top .icon path {
+  fill: #998d33c9;
+}
+
+.back-to-top:hover .icon path {
   fill: #ffffff;
   stroke: none;
 }
@@ -413,7 +497,7 @@ h2 {
   color: #4d471bc9;
 }
 
-/*TOGGLEPAGES*/
+/*TOGGLE PAGES*/
 .toggle-buttons {
   display: flex;
   flex-wrap: wrap;
@@ -433,4 +517,75 @@ h2 {
 
 .toggle-buttons p {
   font-size: 0.8em;
+}
+
+/*RESET PAGES*/
+.addcomp #KOD {
+  font-size: 1.8rem;
+  margin-top: 0.3rem;
+  margin-bottom: 0rem;
+}
+
+.reset-row {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  border-radius: 1rem;
+  box-sizing: border-box;
+  padding: 5px;
+  margin: auto;
+  margin-top: 50px;
+  margin-bottom: 40px;
+  width: 400px;
+  font-size: 14px;
+  -webkit-border-radius: 1rem;
+  -moz-border-radius: 1rem;
+  -ms-border-radius: 1rem;
+  -o-border-radius: 1rem;
+}
+
+.reset-row input {
+  background-color: whitesmoke;
+  margin: auto;
+  border: none;
+  padding: 1rem;
+  font-size: 30px;
+  text-align: center;
+  width: 70px;
+  height: 70px;
+  border-radius: 1rem;
+  color: #4d471bc9;
+  box-shadow: 0 0.4rem #b9ab444d;
+}
+
+.reset-row input:focus {
+  outline-color: #998d33c9;
+}
+
+.reset-btn {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+.reset-btn button {
+  width: 300px;
+}
+
+.send-btn {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+.send-btn button {
+  width: 300px;
+}
+
+.reset-link {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  margin: auto;
+}
+
+.reset-link a {
+  font-size: 14px;
 }

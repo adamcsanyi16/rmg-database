@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import Modal from "react-modal";
-import Select from "react-select";
+//import Select from "react-select";
 
 const Results = () => {
   //VARIABLES
@@ -16,6 +16,7 @@ const Results = () => {
   const [itemToDelete, setItemToDelete] = useState(null);
   const { user } = useAuthContext();
   const [isAdmin, setIsAdmin] = useState(false);
+  const [backToTop, setBackToTop] = useState(false);
 
   //FETCHING ISADMIN
   useEffect(() => {
@@ -33,7 +34,6 @@ const Results = () => {
           const data = await response.json();
           const isAdmin = data.isAdmin;
           setIsAdmin(isAdmin);
-          console.log(isAdmin);
         } else {
           console.log("Error:", response.status);
         }
@@ -111,6 +111,26 @@ const Results = () => {
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
+  };
+
+  //BACKTOTOP USEEFFECT
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  const handleScroll = () => {
+    if (window.scrollY > 100) {
+      setBackToTop(true);
+    } else {
+      setBackToTop(false);
+    }
+  };
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   //PAGES OF RESULTS
@@ -196,59 +216,6 @@ const Results = () => {
     },
   };
 
-  const selectedOptions = {
-    vtipus: [
-      { label: "Verseny típusa", value: "" },
-      { label: "tanulmányi", value: "tanulmányi" },
-      { label: "sport", value: "sport" },
-      { label: "művészeti", value: "művészeti" },
-    ],
-    vszint: [
-      { label: "Verseny szintje", value: "" },
-      { label: "nemzetközi", value: "nemzetközi" },
-      { label: "országos", value: "országos" },
-      { label: "regionális/területi", value: "regionális/területi" },
-    ],
-  };
-
-  const customSelectStyles = {
-    control: (provided, state) => ({
-      ...provided,
-      width: "200px",
-      fontSize: "12px",
-      color: "#4d471bc9",
-      border: "none",
-      backgroundColor: "whitesmoke",
-      padding: "0.3rem",
-      borderRadius: "1rem",
-      boxShadow: "0 0.4rem #b9ab444d",
-      outlineColor: state.isFocused ? "#998d33c9" : null,
-      borderColor: state.isFocused ? "#998d33c9" : null,
-      boxShadow: state.isFocused
-        ? "0 0 0 2px rgba(153, 141, 51, 0.3)"
-        : "0 0.4rem #b9ab444d",
-    }),
-    menu: (provided) => ({
-      ...provided,
-      width: "200px",
-      marginTop: "0",
-      borderRadius: "0.5rem",
-    }),
-    option: (provided, state) => ({
-      ...provided,
-      padding: "0.3rem",
-      fontSize: "12px",
-      color: "#4d471bc9",
-      borderRadius: "0.5rem",
-      backgroundColor: state.isFocused ? "#998d33c9" : null,
-      color: state.isFocused ? "#fff" : "#4d471bc9",
-    }),
-    singleValue: (provided) => ({
-      ...provided,
-      color: "#4d471bc9",
-    }),
-  };
-
   return (
     <div>
       <div className="sorting-container">
@@ -269,6 +236,7 @@ const Results = () => {
             <table className="styled-table">
               <thead>
                 <tr>
+                  {isAdmin && <th>Felvevő email</th>}
                   <th>Verseny típusa</th>
                   <th>Verseny szintje</th>
                   <th>Verseny neve</th>
@@ -285,6 +253,7 @@ const Results = () => {
               <tbody>
                 {currentResults.map((result) => (
                   <tr key={result._id}>
+                    {isAdmin && <td>{result.nev}</td>}
                     <td>{result.vtipus}</td>
                     <td>{result.vszint}</td>
                     <td>{result.verseny}</td>
@@ -366,6 +335,19 @@ const Results = () => {
           </div>
         </Modal>
       </div>
+      <button
+        className={`back-to-top ${backToTop ? "show" : ""}`}
+        onClick={scrollToTop}
+      >
+        <svg
+          height="1.2em"
+          width="1.2rem"
+          className="icon"
+          viewBox="0 0 512 512"
+        >
+          <path d="M233.4 105.4c12.5-12.5 32.8-12.5 45.3 0l192 192c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L256 173.3 86.6 342.6c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l192-192z"></path>
+        </svg>
+      </button>
     </div>
   );
 };

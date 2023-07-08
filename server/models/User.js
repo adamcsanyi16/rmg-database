@@ -31,11 +31,6 @@ userSchema.statics.signup = async function (email, jelszo, jelszoismetles) {
   if (jelszo != jelszoismetles) {
     throw Error("Nem egyezik a jelszó!");
   }
-  if (!validator.isStrongPassword(jelszo)) {
-    throw Error(
-      "A jelszónak legalább 6 karakter hosszúságúnak kell lennie, tartalmaznia kell legalább egy nagybetűt, egy számot, egy kisbetűt és egy speciális karaktert!"
-    );
-  }
 
   const letezik = await this.findOne({ email });
   if (letezik) {
@@ -48,6 +43,24 @@ userSchema.statics.signup = async function (email, jelszo, jelszoismetles) {
     jelszo: hashedJelszo,
   });
   return user;
+};
+
+userSchema.statics.reset = async function (email, jelszo, jelszoismetles) {
+  if (!jelszo || !jelszoismetles) {
+    throw Error("Nem hagyhatsz üresen cellákat!");
+  }
+  if (jelszo != jelszoismetles) {
+    throw Error("Nem egyezik a két jelszó!");
+  }
+
+  const hashedJelszo = await bcrypt.hash(jelszo, 10);
+  const updatedUser = await this.findOneAndUpdate(
+    { email: email },
+    { jelszo: hashedJelszo },
+    { new: true }
+  );
+
+  return updatedUser;
 };
 
 userSchema.statics.login = async function (email, jelszo) {

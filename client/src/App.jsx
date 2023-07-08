@@ -15,6 +15,7 @@ import Addcomp from "./pages/Addinfo/Addcomp";
 import Results from "./pages/Info/Results";
 import Updatecomp from "./pages/Updateinfo/Updatecomp";
 import Addraces from "./pages/Addinfo/Addraces";
+import Reset from "./pages/ResetPass/Reset";
 
 function App() {
   const { user } = useAuthContext();
@@ -50,6 +51,7 @@ function App() {
             path="/eredmenyek"
             element={user ? <Results /> : <Navigate to="/login" />}
           />
+          <Route path="/valtoztat" element={<Reset />} />
         </Routes>
       </Router>
     </div>

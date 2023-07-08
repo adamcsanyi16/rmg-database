@@ -172,72 +172,72 @@ function Addcomp() {
         <div className="form-row">
           <input
             type="text"
-            placeholder="Felvevő neve"
+            placeholder="Felvevő email címe"
             value={nev}
             className="input"
             onChange={(e) => setNev(e.target.value)}
           />
         </div>
         <p>Verseny típusa</p>
-        <div class="radio-inputs">
-          <label class="radio">
+        <div className="radio-inputs">
+          <label className="radio">
             <input
               type="radio"
               name="vtipus"
               value="tanulmányi"
               onChange={(e) => setVtipus(e.target.value)}
             />
-            <span class="name">Tanulmányi</span>
+            <span className="name">Tanulmányi</span>
           </label>
-          <label class="radio">
+          <label className="radio">
             <input
               type="radio"
               name="vtipus"
               value="sport"
               onChange={(e) => setVtipus(e.target.value)}
             />
-            <span class="name">Sport</span>
+            <span className="name">Sport</span>
           </label>
 
-          <label class="radio">
+          <label className="radio">
             <input
               type="radio"
               name="vtipus"
               value="művészeti"
               onChange={(e) => setVtipus(e.target.value)}
             />
-            <span class="name">Művészeti</span>
+            <span className="name">Művészeti</span>
           </label>
         </div>
         <p>Verseny szintje</p>
-        <div class="radio-inputs">
-          <label class="radio">
+        <div className="radio-inputs">
+          <label className="radio">
             <input
               type="radio"
               name="vszint"
               value="nemzetközi"
               onChange={(e) => setVszint(e.target.value)}
             />
-            <span class="name">Nemzetközi</span>
+            <span className="name">Nemzetközi</span>
           </label>
-          <label class="radio">
+          <label className="radio">
             <input
               type="radio"
               name="vszint"
               value="országos"
               onChange={(e) => setVszint(e.target.value)}
             />
-            <span class="name">Országos</span>
+            <span className="name">Országos</span>
           </label>
 
-          <label class="radio">
+          <label className="radio">
             <input
               type="radio"
               name="vszint"
               value="regionális/területi"
               onChange={(e) => setVszint(e.target.value)}
             />
-            <span class="name">Regionális/területi</span>
+            <span className="name">Regionális/területi</span>
           </label>
         </div>
 
@@ -262,24 +262,24 @@ function Addcomp() {
           />
         </div>
         <p>Verseny formája</p>
-        <div class="radio-inputs">
-          <label class="radio">
+        <div className="radio-inputs">
+          <label className="radio">
             <input
               type="radio"
               name="vforma"
               value="egyéni"
               onChange={(e) => setVforma(e.target.value)}
             />
-            <span class="name">Egyéni</span>
+            <span className="name">Egyéni</span>
           </label>
-          <label class="radio">
+          <label className="radio">
             <input
               type="radio"
               name="vforma"
               value="csapat"
               onChange={(e) => setVforma(e.target.value)}
             />
-            <span class="name">Csapat</span>
+            <span className="name">Csapat</span>
           </label>
         </div>
         <div className="form-row">

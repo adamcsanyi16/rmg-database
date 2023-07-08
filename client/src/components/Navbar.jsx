@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useEffect,useState } from "react";
+import { useEffect, useState } from "react";
 import { useLogout } from "../hooks/useLogout";
 import { useAuthContext } from "../hooks/useAuthContext";
 
@@ -22,8 +22,7 @@ const Navbar = () => {
         if (response.ok) {
           const data = await response.json();
           const isAdmin = data.isAdmin;
-          setIsAdmin(isAdmin)
-          console.log(isAdmin);
+          setIsAdmin(isAdmin);
         } else {
           console.log("Error:", response.status);
         }
@@ -33,7 +32,7 @@ const Navbar = () => {
     };
 
     fetchData();
-  }, [user]); 
+  }, [user]);
 
   const klikk = () => {
     logout();
@@ -41,7 +40,6 @@ const Navbar = () => {
 
   return (
     <div className="navbar-container">
-      <nav>
         <Link to={"/"} className="logo">
           Kezdőlap
         </Link>
@@ -49,7 +47,7 @@ const Navbar = () => {
           <div className="nav-links">
             <div className="login-links">
               <Link to={"/eredmenyekfelvetel"}>Eredeményfelvétel</Link>
-              {isAdmin && (<Link to={"/versenyfelvetel"}>Versenyfelvétel</Link>)}
+              {isAdmin && <Link to={"/versenyfelvetel"}>Versenyfelvétel</Link>}
               <Link to={"/eredmenyek"}>Eredmények</Link>
             </div>
             <div className="userinfo">
@@ -66,7 +64,6 @@ const Navbar = () => {
             <Link to={"/login"}>Belépés</Link>
           </div>
         )}
-      </nav>
     </div>
   );
 };
