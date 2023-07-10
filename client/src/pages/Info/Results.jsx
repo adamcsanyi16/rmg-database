@@ -17,6 +17,7 @@ const Results = () => {
   const { user } = useAuthContext();
   const [isAdmin, setIsAdmin] = useState(false);
   const [backToTop, setBackToTop] = useState(false);
+  const [checkedBoxesVtipus, setCheckedBoxesVtipus] = useState([]);
 
   //FETCHING ISADMIN
   useEffect(() => {
@@ -219,6 +220,42 @@ const Results = () => {
   return (
     <div>
       <div className="sorting-container">
+        {/*<label class="container">
+          <input
+            type="checkbox"
+            checked={checkedBoxesVtipus.includes("tanulmányi")}
+            onChange={() => handleCheckboxChange("tanulmányi")}
+          />
+          <div class="checkmark"></div>
+          <p>Tanulmányi</p>
+        </label>
+        <label class="container">
+          <input
+            type="checkbox"
+            checked={checkedBoxesVtipus.includes("sport")}
+            onChange={() => handleCheckboxChange("sport")}
+          />
+          <div class="checkmark"></div>
+          <p>Sport</p>
+        </label>
+        <label class="container">
+          <input
+            type="checkbox"
+            checked={checkedBoxesVtipus.includes("művészeti")}
+            onChange={() => handleCheckboxChange("művészeti")}
+          />
+          <div class="checkmark"></div>
+          <p>Művészeti</p>
+        </label>
+        <label class="container">
+          <input
+            type="checkbox"
+            checked={checkedBoxesVtipus.includes("országos")}
+            onChange={() => handleCheckboxChange("országos")}
+          />
+          <div class="checkmark"></div>
+          <p>Országos</p>
+        </label>*/}
         <div className="filter">
           <input
             type="text"

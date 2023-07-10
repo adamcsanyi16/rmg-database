@@ -3,8 +3,7 @@ import { RecoveryContext } from "./Reset";
 import axios from "axios";
 
 const EmailSending = () => {
-  const { universalEmail, setUniversalEmail, setPage, setKOD } =
-    useContext(RecoveryContext);
+  const { setUniversalEmail, setPage, setKOD } = useContext(RecoveryContext);
   const [email, setEmail] = useState("");
   const [success, setSuccess] = useState(null);
   const [error, setError] = useState(null);
