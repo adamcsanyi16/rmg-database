@@ -8,6 +8,7 @@ const Login = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [showPass, setShowPass] = useState(false);
   const { dispatch } = useAuthContext();
 
   const navigate = useNavigate();
@@ -60,12 +61,23 @@ const Login = () => {
         </div>
         <div className="form-row">
           <input
-            type="password"
+            type={showPass ? "text" : "password"}
             id="jelszo"
             name="jelszo"
             placeholder="Jelszó"
             onChange={(e) => setJelszo(e.target.value)}
           />
+        </div>
+        <div className="checkbox">
+          <label className="container">
+            <input
+              type="checkbox"
+              checked={showPass}
+              onChange={(e) => setShowPass(e.target.checked)}
+            />
+            <div className="checkmark"></div>
+          </label>
+          <span>Mutasd a jelszót!</span>
         </div>
         <div className="forgot-password">
           <Link to={"/valtoztat"}>Elfejtettem a jelszavam</Link>

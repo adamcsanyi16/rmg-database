@@ -106,6 +106,7 @@ body {
   justify-content: center;
   align-items: center;
 }
+
 .forms-container {
   display: flex;
   justify-content: center;
@@ -116,13 +117,18 @@ body {
 .form-container h2 {
   text-align: center;
   color: #4d471bc9;
-  margin-bottom: 20px;
+  margin-bottom: 2rempx;
 }
 
 .form-container p {
   text-align: center;
   color: #4d471bc9;
   font-size: 14px;
+}
+
+.forms-container .checkbox {
+  display: flex;
+  margin-left: 1rem;
 }
 
 form {
@@ -170,6 +176,7 @@ form {
 
 .form-row input:focus {
   outline-color: #998d33c9;
+  box-shadow: 0 0.4rem #b9ab449a;
 }
 
 .radio-inputs {
@@ -287,7 +294,7 @@ button:active {
   margin-top: 20px;
   margin-bottom: -10px;
   display: flex;
-  justify-content: flex-enda;
+  justify-content: flex-end;
 }
 .forgot-password a {
   text-decoration: underline;
@@ -364,7 +371,7 @@ button:active {
 .results {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 90vh;
 }
 
 .results-wrap,
@@ -383,6 +390,20 @@ button:active {
   padding: 10px;
 }
 
+#reset-btn {
+  display: flex;
+  justify-content: end;
+  font-size: 14px;
+  color: #998d33c9;
+  cursor: pointer;
+  margin-bottom: 0.5rem;
+}
+
+#reset-btn:hover {
+  color: #4d471bc9;
+  text-decoration: underline;
+}
+
 .table-container {
   flex: 1;
   padding-right: 3rem;
@@ -393,7 +414,7 @@ button:active {
   display: flex;
   justify-content: center;
   margin-top: 0.5rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 
 .filter input {
@@ -410,6 +431,50 @@ button:active {
 
 .filter input:focus {
   outline-color: #998d33c9;
+  box-shadow: 0 0.4rem #b9ab449a;
+}
+
+.helyezes {
+  border-radius: 1rem;
+  -webkit-border-radius: 1rem;
+  -moz-border-radius: 1rem;
+  -ms-border-radius: 1rem;
+  -o-border-radius: 1rem;
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+  border: thin solid #998d33c9;
+}
+
+.helyezes button {
+  margin-top: 0.5rem;
+  
+}
+
+.versenyek button {
+  margin-top: 1rem;
+}
+
+.from-to {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+}
+
+.from-to input {
+  background-color: whitesmoke;
+  border: none;
+  margin: 0.3rem;
+  padding: 0.8rem;
+  font-size: 1rem;
+  width: 200px;
+  border-radius: 1rem;
+  color: #4d471bc9;
+  box-shadow: 0 0.4rem #b9ab444d;
+}
+
+.from-to input:focus {
+  outline-color: #998d33c9;
+  box-shadow: 0 0.4rem #b9ab449a;
 }
 
 .btn {
@@ -697,7 +762,10 @@ h2 {
   align-items: center;
 }
 
-.vtipus, .vszint {
+.vtipus,
+.vszint,
+.vforma,
+.versenyek {
   border-radius: 1rem;
   -webkit-border-radius: 1rem;
   -moz-border-radius: 1rem;

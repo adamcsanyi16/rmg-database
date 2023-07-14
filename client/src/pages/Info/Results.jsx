@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import Modal from "react-modal";
+import Select from "react-select";
 
 const Results = () => {
   //VARIABLES
@@ -16,6 +17,19 @@ const Results = () => {
   const { user } = useAuthContext();
   const [isAdmin, setIsAdmin] = useState(false);
   const [backToTop, setBackToTop] = useState(false);
+  const [fromValue, setFromValue] = useState("");
+  const [toValue, setToValue] = useState("");
+  const [dropdownOptions, setDropdownOptions] = useState([]);
+  const [selectedOption, setSelectedOption] = useState(null);
+
+  const [isTanulmanyiChecked, setIsTanulmanyiChecked] = useState(false);
+  const [isSportChecked, setIsSportChecked] = useState(false);
+  const [isMuveszetiChecked, setIsMuveszetiChecked] = useState(false);
+  const [isRegionalisChecked, setIsRegionalisChecked] = useState(false);
+  const [isOrszagosChecked, setIsOrszagosChecked] = useState(false);
+  const [isNemzetkoziChecked, setIsNemzetkoziChecked] = useState(false);
+  const [isEgyeniChecked, setIsEgyeniChecked] = useState(false);
+  const [isCsapatChecked, setIsCsapatChecked] = useState(false);
 
   //FETCHING ISADMIN
   useEffect(() => {
@@ -43,6 +57,98 @@ const Results = () => {
 
     fetchData();
   }, [user]);
+
+  //FETCHING COMPETITIONS
+  useEffect(() => {
+    const fetchDropdownOptions = async () => {
+      try {
+        const adat = await fetch("http://localhost:3500/verseny", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.token}`,
+          },
+        });
+
+        if (adat.ok) {
+          const response = await adat.json();
+
+          const transformedOptions = response.comps.map((option) => ({
+            label: option.verseny,
+            value: option.verseny,
+          }));
+          setDropdownOptions(transformedOptions);
+        } else {
+          const response = await adat.json();
+          setError(response.msg);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchDropdownOptions();
+  }, []);
+
+  const customSelectStyles = {
+    control: (provided, state) => ({
+      ...provided,
+      width: "200px",
+      fontSize: "12px",
+      color: "#4d471bc9",
+      border: "none",
+      backgroundColor: "whitesmoke",
+      padding: "0.5rem",
+      borderRadius: "1rem",
+      boxShadow: "0 0.4rem #b9ab444d",
+      outlineColor: state.isFocused ? "#998d33c9" : null,
+      borderColor: state.isFocused ? "#998d33c9" : null,
+      boxShadow: state.isFocused
+        ? "0 0 0 2px rgba(153, 141, 51, 0.3)"
+        : "0 0.4rem #b9ab444d",
+    }),
+    menu: (provided) => ({
+      ...provided,
+      width: "200px",
+      marginTop: "0",
+      borderRadius: "1rem",
+    }),
+    option: (provided, state) => ({
+      ...provided,
+      padding: "1rem",
+      color: "#4d471bc9",
+      borderRadius: "1rem",
+      fontSize: "12px",
+      backgroundColor: state.isFocused ? "#998d33c9" : null,
+      color: state.isFocused ? "#fff" : "#4d471bc9",
+    }),
+    singleValue: (provided) => ({
+      ...provided,
+      color: "#4d471bc9",
+    }),
+  };
+
+  const handleDropdownChange = (selectedOption) => {
+    setSelectedOption(selectedOption);
+  };
+
+  const handleReset = () => {
+    setSelectedOption(null);
+  };
+
+  const handleResetAll = () => {
+    setIsTanulmanyiChecked(false)
+    setIsSportChecked(false)
+    setIsMuveszetiChecked(false)
+    setIsRegionalisChecked(false)
+    setIsOrszagosChecked(false)
+    setIsNemzetkoziChecked(false)
+    setSelectedOption(null);
+    setIsEgyeniChecked(false)
+    setIsCsapatChecked(false)
+    setFromValue("");
+    setToValue("");
+  };
 
   //LOADING DATA
   useEffect(() => {
@@ -73,7 +179,7 @@ const Results = () => {
     };
 
     data();
-  }, []);
+  }, [user]);
 
   //CHECKBOXES
 
@@ -104,14 +210,67 @@ const Results = () => {
         lowercaseOsztaly.includes(lowercaseSearchTerm) ||
         lowercaseTanarok.includes(lowercaseSearchTerm);
 
-      return searchBarSorting;
+      const isFromValueValid =
+        fromValue === "" || parseInt(result.helyezes) >= parseInt(fromValue);
+      const isToValueValid =
+        toValue === "" || parseInt(result.helyezes) <= parseInt(toValue);
+
+      const isVtipusValid =
+        (!isTanulmanyiChecked ||
+          result.vtipus.toLowerCase() === "tanulmányi") &&
+        (!isSportChecked || result.vtipus.toLowerCase() === "sport") &&
+        (!isMuveszetiChecked || result.vtipus.toLowerCase() === "művészeti");
+
+      const isVszintValid =
+        (!isRegionalisChecked ||
+          result.vszint.toLowerCase() === "regionális/területi") &&
+        (!isOrszagosChecked || result.vszint.toLowerCase() === "országos") &&
+        (!isNemzetkoziChecked || result.vszint.toLowerCase() === "nemzetközi");
+
+      const isVformaValid =
+        (!isEgyeniChecked || result.vforma.toLowerCase() === "egyéni") &&
+        (!isCsapatChecked || result.vforma.toLowerCase() === "csapat");
+
+      const isVersenyValid =
+        selectedOption === null ||
+        result.verseny.toLowerCase() === selectedOption.value.toLowerCase();
+
+      return (
+        searchBarSorting &&
+        isFromValueValid &&
+        isToValueValid &&
+        isVtipusValid &&
+        isVszintValid &&
+        isVformaValid &&
+        isVersenyValid
+      );
     });
 
     setFilteredResults(filtered);
-  }, [searchTerm, results]);
+  }, [
+    searchTerm,
+    results,
+    fromValue,
+    toValue,
+    isTanulmanyiChecked,
+    isSportChecked,
+    isMuveszetiChecked,
+    isRegionalisChecked,
+    isOrszagosChecked,
+    isNemzetkoziChecked,
+    isEgyeniChecked,
+    isCsapatChecked,
+    selectedOption,
+  ]);
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
+  };
+
+  //HELYEZES FILTER RESET
+  const handleHelyezesReset = () => {
+    setFromValue("");
+    setToValue("");
   };
 
   //BACKTOTOP USEEFFECT
@@ -235,25 +394,38 @@ const Results = () => {
               onChange={handleSearchChange}
             />
           </div>
+          <span id="reset-btn" onClick={handleResetAll}>Alapértelmezett</span>
           <div className="vtipus">
             <span id="category">Versenytípus</span>
             <div className="checkbox">
               <label className="container">
-                <input type="checkbox" />
+                <input
+                  type="checkbox"
+                  checked={isTanulmanyiChecked}
+                  onChange={(e) => setIsTanulmanyiChecked(e.target.checked)}
+                />
                 <div className="checkmark"></div>
               </label>
               <span>Tanulmányi</span>
             </div>
             <div className="checkbox">
               <label className="container">
-                <input type="checkbox" />
+                <input
+                  type="checkbox"
+                  checked={isSportChecked}
+                  onChange={(e) => setIsSportChecked(e.target.checked)}
+                />
                 <div className="checkmark"></div>
               </label>
               <span>Sport</span>
             </div>
             <div className="checkbox">
               <label className="container">
-                <input type="checkbox" />
+                <input
+                  type="checkbox"
+                  checked={isMuveszetiChecked}
+                  onChange={(e) => setIsMuveszetiChecked(e.target.checked)}
+                />
                 <div className="checkmark"></div>
               </label>
               <span>Művészeti</span>
@@ -263,25 +435,96 @@ const Results = () => {
             <span id="category">Versenyszint</span>
             <div className="checkbox">
               <label className="container">
-                <input type="checkbox" />
+                <input
+                  type="checkbox"
+                  checked={isRegionalisChecked}
+                  onChange={(e) => setIsRegionalisChecked(e.target.checked)}
+                />
                 <div className="checkmark"></div>
               </label>
               <span>Regionális/területi</span>
             </div>
             <div className="checkbox">
               <label className="container">
-                <input type="checkbox" />
+                <input
+                  type="checkbox"
+                  checked={isOrszagosChecked}
+                  onChange={(e) => setIsOrszagosChecked(e.target.checked)}
+                />
                 <div className="checkmark"></div>
               </label>
               <span>Országos</span>
             </div>
             <div className="checkbox">
               <label className="container">
-                <input type="checkbox" />
+                <input
+                  type="checkbox"
+                  checked={isNemzetkoziChecked}
+                  onChange={(e) => setIsNemzetkoziChecked(e.target.checked)}
+                />
                 <div className="checkmark"></div>
               </label>
               <span>Nemzetközi</span>
             </div>
+          </div>
+          <div className="versenyek">
+            <span id="category">Versenyek</span>
+            {dropdownOptions.length > 0 && (
+              <Select
+                options={dropdownOptions}
+                placeholder=""
+                value={selectedOption}
+                onChange={handleDropdownChange}
+                className="custom-select"
+                styles={customSelectStyles}
+              />
+            )}
+            <button onClick={handleReset}>Visszaállít</button>
+          </div>
+          <div className="vforma">
+            <span id="category">Versenyforma</span>
+            <div className="checkbox">
+              <label className="container">
+                <input
+                  type="checkbox"
+                  checked={isEgyeniChecked}
+                  onChange={(e) => setIsEgyeniChecked(e.target.checked)}
+                />
+                <div className="checkmark"></div>
+              </label>
+              <span>Egyéni</span>
+            </div>
+            <div className="checkbox">
+              <label className="container">
+                <input
+                  type="checkbox"
+                  checked={isCsapatChecked}
+                  onChange={(e) => setIsCsapatChecked(e.target.checked)}
+                />
+                <div className="checkmark"></div>
+              </label>
+              <span>Csapat</span>
+            </div>
+          </div>
+          <div className="helyezes">
+            <span id="category">Helyezés</span>
+            <div className="from-to">
+              <input
+                type="number"
+                placeholder="Tól"
+                value={fromValue}
+                onChange={(e) => setFromValue(e.target.value)}
+              />
+            </div>
+            <div className="from-to">
+              <input
+                type="number"
+                placeholder="Ig"
+                value={toValue}
+                onChange={(e) => setToValue(e.target.value)}
+              />
+            </div>
+            <button onClick={handleHelyezesReset}>Visszaállít</button>
           </div>
         </div>
         <div className="table-container" ref={tableContainerRef}>

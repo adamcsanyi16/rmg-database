@@ -337,7 +337,7 @@ app.get("/isAdmin", async (req, res) => {
     const isAdmin = res.locals.isAdmin;
     res.status(200).json({ isAdmin });
   } catch (error) {
-    res.status(500).json({ msg: "Valami hiba történt" + error.message });
+    res.status(500).json({ msg: "Valami hiba történt: " + error.message });
   }
 });
 
