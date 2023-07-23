@@ -9,6 +9,7 @@ const Comps = require("./models/Onlycomps");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const requireAuth = require("./middlewares/requireAuth");
+const Agazat = require("./models/Agazat");
 
 //HTML EMAIL FOR REG
 const htmlRegister = `
@@ -115,7 +116,7 @@ const sendEmail = ({ email, KOD }) => {
 //TOKEN CREATION
 const createToken = (_id, isAdmin) => {
   return jwt.sign({ _id, isAdmin }, process.env.SECRET, {
-    expiresIn: "3d",
+    expiresIn: "3h",
   });
 };
 
@@ -327,6 +328,28 @@ app.post("/verseny", async (req, res) => {
     });
     await newComp.save();
     res.status(200).json({ msg: "Sikeres verseny létrehozás!" });
+  } catch (error) {
+    res.status(500).json({ msg: "Valami hiba történt" + error.message });
+  }
+});
+
+app.get("/agazat", async (req, res) => {
+  try {
+    const agazat = await Agazat.find({});
+    res.status(200).json({ agazat });
+  } catch (error) {
+    res.status(500).json({ msg: "Valami hiba történt" + error.message });
+  }
+});
+
+app.post("/agazat", async (req, res) => {
+  try {
+    const { agazat } = req.body;
+    const newAgazat = new Agazat({
+      agazat,
+    });
+    await newAgazat.save();
+    res.status(200).json({ msg: "Sikeres ágazat létrehozás!" });
   } catch (error) {
     res.status(500).json({ msg: "Valami hiba történt" + error.message });
   }

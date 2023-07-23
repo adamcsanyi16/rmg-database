@@ -16,12 +16,16 @@ const requireAuth = async (req, res, next) => {
     const { _id, isAdmin } = jwt.verify(token, process.env.SECRET);
 
     req.user = await User.findOne({ _id }).select("_id");
-    req.isAdmin = isAdmin
+    req.isAdmin = isAdmin;
     res.locals.isAdmin = isAdmin;
     next();
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ msg: "A kérés nincs hitelesítve!" });
+    if (error.name === "TokenExpiredError") {
+      return res.status(401).json({ msg: "Token expired" });
+    } else {
+      console.log(error);
+      return res.status(500).json({ msg: "A kérés nincs hitelesítve!" });
+    }
   }
 };
 

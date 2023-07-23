@@ -4,6 +4,7 @@
   box-sizing: border-box;
   margin: 0px;
   padding: 0px;
+  user-select: none;
 }
 
 body {
@@ -40,18 +41,30 @@ body {
   letter-spacing: 5px;
   text-decoration: none;
   margin-right: 20px;
+  padding: 0.5rem;
+}
+
+.logo.active {
+  color: whitesmoke;
+  border: thin solid whitesmoke;
+  background-color: rgba(245, 245, 245, 0.215);
+  border-radius: 1rem;
+  -webkit-border-radius: 1.5rem;
+  -moz-border-radius: 1rem;
+  -ms-border-radius: 1rem;
+  -o-border-radius: 1rem;
+  padding: 0.5rem;
 }
 
 .navbar-container a {
   margin-left: 5px;
   color: whitesmoke;
   text-decoration: none;
+  padding: 0.5rem;
 }
 
 .navbar-container a:hover {
-  color: #4d471bc9;
   text-decoration: none;
-  border-radius: 5px;
 }
 
 .nav-links {
@@ -62,11 +75,7 @@ body {
 .nav-links a {
   color: whitesmoke;
   text-decoration: none;
-  margin-right: 10px;
-}
-
-.nav-links a:hover {
-  color: #4d471bc9;
+  padding: 0.5rem;
 }
 
 .logout-btn {
@@ -91,13 +100,54 @@ body {
 
 .userinfo span {
   color: whitesmoke;
-  font-size: smaller;
+  font-size: 0.8rem;
 }
 
 .login-links {
   display: flex;
   align-items: center;
   margin-right: 20px;
+}
+
+#active {
+  color: whitesmoke;
+  border: thin solid whitesmoke;
+  background-color: rgba(245, 245, 245, 0.215);
+  border-radius: 1rem;
+  -webkit-border-radius: 1rem;
+  -moz-border-radius: 1rem;
+  -ms-border-radius: 1rem;
+  -o-border-radius: 1rem;
+  padding: 0.5rem;
+}
+
+/*UNDERLINE ANIMATION*/
+.nav-links > .login-links > a,
+.logo {
+  position: relative;
+  text-decoration: none;
+  padding-bottom: 2px;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.2s ease-in-out;
+}
+
+.nav-links > .login-links > a:not(.active):hover,
+.logo:not(.active):hover {
+  border-bottom-color: whitesmoke;
+}
+
+.nav-links > a,
+.logo {
+  position: relative;
+  text-decoration: none;
+  padding-bottom: 2px;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.2s ease-in-out;
+}
+
+.nav-links > a:not(.active):hover,
+.logo:not(.active):hover {
+  border-bottom-color: whitesmoke;
 }
 
 /*FORM*/
@@ -315,6 +365,7 @@ button:active {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin: auto;
   border: #e60000 solid 1px;
   color: #e60000;
   max-width: 500px;
@@ -333,6 +384,7 @@ button:active {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin: auto;
   border: #00e60c solid 1px;
   color: #00d80b;
   font-size: 15px;
@@ -390,9 +442,13 @@ button:active {
   padding: 10px;
 }
 
+.sorting-container.smaller-width {
+  flex-basis: 50px;
+}
+
 #reset-btn {
   display: flex;
-  justify-content: end;
+  justify-content: flex-end;
   font-size: 14px;
   color: #998d33c9;
   cursor: pointer;
@@ -406,6 +462,7 @@ button:active {
 
 .table-container {
   flex: 1;
+  width: 100%;
   padding-right: 3rem;
   padding-left: 2rem;
 }
@@ -447,11 +504,13 @@ button:active {
 
 .helyezes button {
   margin-top: 0.5rem;
-  
+  width: 200px;
 }
 
-.versenyek button {
+.versenyek button,
+.agazatok button {
   margin-top: 1rem;
+  width: 200px;
 }
 
 .from-to {
@@ -552,9 +611,8 @@ button:active {
 
 .styled-table {
   border-collapse: collapse;
-  margin: 25px 0;
-  min-width: 400px;
-  max-width: 1300px;
+  margin: 20px 0;
+  width: 1100px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
   border-radius: 1rem;
   overflow: hidden;
@@ -567,12 +625,12 @@ button:active {
 
 .styled-table td {
   font-size: 0.8rem;
-  padding: 12px 15px;
+  padding: 8px 11px;
 }
 
 .styled-table th {
   font-size: 1rem;
-  padding: 12px 15px;
+  padding: 8px 11px;
 }
 
 .styled-table tbody tr {
@@ -765,7 +823,8 @@ h2 {
 .vtipus,
 .vszint,
 .vforma,
-.versenyek {
+.versenyek,
+.agazatok {
   border-radius: 1rem;
   -webkit-border-radius: 1rem;
   -moz-border-radius: 1rem;
@@ -847,4 +906,136 @@ h2 {
   border: solid white;
   border-width: 0 0.15em 0.15em 0;
   transform: rotate(45deg);
+}
+
+/*MENU BUTTON*/
+
+.burger {
+  position: relative;
+  width: 30px;
+  height: 22.5px;
+  background: transparent;
+  cursor: pointer;
+  display: block;
+}
+
+.burger input {
+  display: none;
+}
+
+.burger span {
+  display: block;
+  position: absolute;
+  height: 3px;
+  width: 100%;
+  background: #998d33e4;
+  border-radius: 9px;
+  opacity: 1;
+  left: 0;
+  transform: rotate(0deg);
+  transition: 0.25s ease-in-out;
+}
+
+.burger span:nth-of-type(1) {
+  top: 0px;
+  transform-origin: left center;
+}
+
+.burger span:nth-of-type(2) {
+  top: 50%;
+  transform: translateY(-50%);
+  transform-origin: left center;
+}
+
+.burger span:nth-of-type(3) {
+  top: 100%;
+  transform-origin: left center;
+  transform: translateY(-100%);
+}
+
+.burger input:checked ~ span:nth-of-type(1) {
+  transform: rotate(45deg);
+  top: 0px;
+  left: 5px;
+}
+
+.burger input:checked ~ span:nth-of-type(2) {
+  width: 0%;
+  opacity: 0;
+}
+
+.burger input:checked ~ span:nth-of-type(3) {
+  transform: rotate(-45deg);
+  top: 21px;
+  left: 5px;
+}
+
+/*RESPONSIVE*/
+
+@media only screen and (max-width: 1300px) {
+  /*NAVBAR*/
+  .logo {
+    font-size: 26px;
+    margin-right: 18px;
+    padding: 0.4rem;
+  }
+
+  .logo.active {
+    padding: 0.4rem;
+  }
+
+  .navbar-container a {
+    padding: 0.4rem;
+  }
+
+  .userinfo span {
+    font-size: 0.75rem;
+  }
+
+  .login-links a {
+    font-size: 0.95rem;
+  }
+
+  #active {
+    padding: 0.4rem;
+  }
+
+  /*EREDMENYEK*/
+  .styled-table td {
+    font-size: 0.7rem;
+    padding: 6px 9px;
+  }
+
+  .styled-table th {
+    font-size: 0.9rem;
+    padding: 6px 9px;
+  }
+
+  .sorting-container {
+    flex-basis: 220px;
+    padding: 10px;
+  }
+
+  .filter input {
+    width: 200px;
+    font-size: 14px;
+  }
+
+  .from-to input {
+    width: 180px;
+  }
+
+  .checkbox span {
+    font-size: 14px;
+  }
+
+  .versenyek button,
+  .agazatok button,
+  .helyezes button {
+    width: fit-content;
+  }
+
+  #category {
+    font-size: 14px;
+  }
 }

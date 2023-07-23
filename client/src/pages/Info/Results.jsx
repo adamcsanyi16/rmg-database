@@ -1,10 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useAuthContext } from "../../hooks/useAuthContext";
+import { useLogout } from "../../hooks/useLogout";
 import Modal from "react-modal";
 import Select from "react-select";
 
 const Results = () => {
+  const { logout } = useLogout();
+
   //VARIABLES
   const [results, setResults] = useState([]);
   const [error, setError] = useState(null);
@@ -13,15 +16,18 @@ const Results = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [showModal, setShowModal] = useState(false);
+  const [showTokenExpiredModal, setShowTokenExpiredModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
   const { user } = useAuthContext();
   const [isAdmin, setIsAdmin] = useState(false);
   const [backToTop, setBackToTop] = useState(false);
+  const [dropdownVersenyek, setDropdownVersenyek] = useState([]);
+  const [selectedVerseny, setSelectedVerseny] = useState(null);
+  const [dropdownAgazatok, setDropdownAgazatok] = useState([]);
+  const [selectedAgazat, setSelectedAgazat] = useState(null);
+
   const [fromValue, setFromValue] = useState("");
   const [toValue, setToValue] = useState("");
-  const [dropdownOptions, setDropdownOptions] = useState([]);
-  const [selectedOption, setSelectedOption] = useState(null);
-
   const [isTanulmanyiChecked, setIsTanulmanyiChecked] = useState(false);
   const [isSportChecked, setIsSportChecked] = useState(false);
   const [isMuveszetiChecked, setIsMuveszetiChecked] = useState(false);
@@ -30,6 +36,28 @@ const Results = () => {
   const [isNemzetkoziChecked, setIsNemzetkoziChecked] = useState(false);
   const [isEgyeniChecked, setIsEgyeniChecked] = useState(false);
   const [isCsapatChecked, setIsCsapatChecked] = useState(false);
+
+  const [showFilters, setShowFilters] = useState(false);
+
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+
+  //WINDOW WIDTH LISTENER
+  useEffect(() => {
+    const handleResize = () => {
+      setScreenWidth(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  //SHOW/HIDE FILTERS
+  const handleCheckboxChange = (e) => {
+    setShowFilters(e.target.checked);
+  };
 
   //FETCHING ISADMIN
   useEffect(() => {
@@ -77,7 +105,42 @@ const Results = () => {
             label: option.verseny,
             value: option.verseny,
           }));
-          setDropdownOptions(transformedOptions);
+          setDropdownVersenyek(transformedOptions);
+        } else {
+          const response = await adat.json();
+          setError(response.msg);
+          if (response.msg.includes("Token expired")) {
+            setShowTokenExpiredModal(true);
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchDropdownOptions();
+  }, [user.token]);
+
+  //FETCHING AGAZATOK
+  useEffect(() => {
+    const fetchDropdownAgazatok = async () => {
+      try {
+        const adat = await fetch("http://localhost:3500/agazat", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.token}`,
+          },
+        });
+
+        if (adat.ok) {
+          const response = await adat.json();
+
+          const transformedOptions = response.agazat.map((option) => ({
+            label: option.agazat,
+            value: option.agazat,
+          }));
+          setDropdownAgazatok(transformedOptions);
         } else {
           const response = await adat.json();
           setError(response.msg);
@@ -87,20 +150,19 @@ const Results = () => {
       }
     };
 
-    fetchDropdownOptions();
-  }, []);
+    fetchDropdownAgazatok();
+  }, [user.token]);
 
   const customSelectStyles = {
     control: (provided, state) => ({
       ...provided,
-      width: "200px",
-      fontSize: "12px",
+      width: screenWidth <= 1300 ? "170px" : "200px",
+      fontSize: "11px",
       color: "#4d471bc9",
       border: "none",
       backgroundColor: "whitesmoke",
       padding: "0.5rem",
       borderRadius: "1rem",
-      boxShadow: "0 0.4rem #b9ab444d",
       outlineColor: state.isFocused ? "#998d33c9" : null,
       borderColor: state.isFocused ? "#998d33c9" : null,
       boxShadow: state.isFocused
@@ -109,16 +171,15 @@ const Results = () => {
     }),
     menu: (provided) => ({
       ...provided,
-      width: "200px",
+      width: screenWidth <= 1300 ? "170px" : "200px",
       marginTop: "0",
       borderRadius: "1rem",
     }),
     option: (provided, state) => ({
       ...provided,
       padding: "1rem",
-      color: "#4d471bc9",
       borderRadius: "1rem",
-      fontSize: "12px",
+      fontSize: "11px",
       backgroundColor: state.isFocused ? "#998d33c9" : null,
       color: state.isFocused ? "#fff" : "#4d471bc9",
     }),
@@ -128,24 +189,33 @@ const Results = () => {
     }),
   };
 
-  const handleDropdownChange = (selectedOption) => {
-    setSelectedOption(selectedOption);
+  const handleDropdownChange = (selectedVerseny) => {
+    setSelectedVerseny(selectedVerseny);
   };
 
-  const handleReset = () => {
-    setSelectedOption(null);
+  const handleAgazatChange = (selectedAgazat) => {
+    setSelectedAgazat(selectedAgazat);
+  };
+
+  const handleResetVerseny = () => {
+    setSelectedVerseny(null);
+  };
+
+  const handleResetAgazat = () => {
+    setSelectedAgazat(null);
   };
 
   const handleResetAll = () => {
-    setIsTanulmanyiChecked(false)
-    setIsSportChecked(false)
-    setIsMuveszetiChecked(false)
-    setIsRegionalisChecked(false)
-    setIsOrszagosChecked(false)
-    setIsNemzetkoziChecked(false)
-    setSelectedOption(null);
-    setIsEgyeniChecked(false)
-    setIsCsapatChecked(false)
+    setIsTanulmanyiChecked(false);
+    setIsSportChecked(false);
+    setIsMuveszetiChecked(false);
+    setIsRegionalisChecked(false);
+    setIsOrszagosChecked(false);
+    setIsNemzetkoziChecked(false);
+    setSelectedVerseny(null);
+    setSelectedAgazat(null);
+    setIsEgyeniChecked(false);
+    setIsCsapatChecked(false);
     setFromValue("");
     setToValue("");
   };
@@ -171,7 +241,7 @@ const Results = () => {
           setResults(jsonData.msg);
         } else {
           const jsonData = await adat.json();
-          setError(jsonData);
+          setError(jsonData.msg);
         }
       } catch (error) {
         console.log(error);
@@ -180,8 +250,6 @@ const Results = () => {
 
     data();
   }, [user]);
-
-  //CHECKBOXES
 
   //SEARCHING
   useEffect(() => {
@@ -232,8 +300,12 @@ const Results = () => {
         (!isCsapatChecked || result.vforma.toLowerCase() === "csapat");
 
       const isVersenyValid =
-        selectedOption === null ||
-        result.verseny.toLowerCase() === selectedOption.value.toLowerCase();
+        selectedVerseny === null ||
+        result.verseny.toLowerCase() === selectedVerseny.value.toLowerCase();
+
+      const isAgazatValid =
+        selectedAgazat === null ||
+        result.agazat.toLowerCase() === selectedAgazat.value.toLowerCase();
 
       return (
         searchBarSorting &&
@@ -242,7 +314,8 @@ const Results = () => {
         isVtipusValid &&
         isVszintValid &&
         isVformaValid &&
-        isVersenyValid
+        isVersenyValid &&
+        isAgazatValid
       );
     });
 
@@ -260,7 +333,8 @@ const Results = () => {
     isNemzetkoziChecked,
     isEgyeniChecked,
     isCsapatChecked,
-    selectedOption,
+    selectedVerseny,
+    selectedAgazat,
   ]);
 
   const handleSearchChange = (e) => {
@@ -335,7 +409,7 @@ const Results = () => {
           setSuccess(jsonData.msg);
         } else {
           const jsonData = await toroltAdat.json();
-          console.log(jsonData);
+          setError(jsonData.msg);
         }
       } catch (error) {
         console.log(error.message);
@@ -382,150 +456,188 @@ const Results = () => {
     },
   };
 
+  const closeModalTokenExpired = () => {
+    logout();
+    setShowTokenExpiredModal(false);
+  };
+
   return (
     <div className="results">
       <div className="results-wrap">
-        <div className="sorting-container">
-          <div className="filter">
-            <input
-              type="text"
-              placeholder="Keresés..."
-              value={searchTerm}
-              onChange={handleSearchChange}
-            />
-          </div>
-          <span id="reset-btn" onClick={handleResetAll}>Alapértelmezett</span>
-          <div className="vtipus">
-            <span id="category">Versenytípus</span>
-            <div className="checkbox">
-              <label className="container">
-                <input
-                  type="checkbox"
-                  checked={isTanulmanyiChecked}
-                  onChange={(e) => setIsTanulmanyiChecked(e.target.checked)}
-                />
-                <div className="checkmark"></div>
-              </label>
-              <span>Tanulmányi</span>
-            </div>
-            <div className="checkbox">
-              <label className="container">
-                <input
-                  type="checkbox"
-                  checked={isSportChecked}
-                  onChange={(e) => setIsSportChecked(e.target.checked)}
-                />
-                <div className="checkmark"></div>
-              </label>
-              <span>Sport</span>
-            </div>
-            <div className="checkbox">
-              <label className="container">
-                <input
-                  type="checkbox"
-                  checked={isMuveszetiChecked}
-                  onChange={(e) => setIsMuveszetiChecked(e.target.checked)}
-                />
-                <div className="checkmark"></div>
-              </label>
-              <span>Művészeti</span>
-            </div>
-          </div>
-          <div className="vszint">
-            <span id="category">Versenyszint</span>
-            <div className="checkbox">
-              <label className="container">
-                <input
-                  type="checkbox"
-                  checked={isRegionalisChecked}
-                  onChange={(e) => setIsRegionalisChecked(e.target.checked)}
-                />
-                <div className="checkmark"></div>
-              </label>
-              <span>Regionális/területi</span>
-            </div>
-            <div className="checkbox">
-              <label className="container">
-                <input
-                  type="checkbox"
-                  checked={isOrszagosChecked}
-                  onChange={(e) => setIsOrszagosChecked(e.target.checked)}
-                />
-                <div className="checkmark"></div>
-              </label>
-              <span>Országos</span>
-            </div>
-            <div className="checkbox">
-              <label className="container">
-                <input
-                  type="checkbox"
-                  checked={isNemzetkoziChecked}
-                  onChange={(e) => setIsNemzetkoziChecked(e.target.checked)}
-                />
-                <div className="checkmark"></div>
-              </label>
-              <span>Nemzetközi</span>
-            </div>
-          </div>
-          <div className="versenyek">
-            <span id="category">Versenyek</span>
-            {dropdownOptions.length > 0 && (
-              <Select
-                options={dropdownOptions}
-                placeholder=""
-                value={selectedOption}
-                onChange={handleDropdownChange}
-                className="custom-select"
-                styles={customSelectStyles}
-              />
-            )}
-            <button onClick={handleReset}>Visszaállít</button>
-          </div>
-          <div className="vforma">
-            <span id="category">Versenyforma</span>
-            <div className="checkbox">
-              <label className="container">
-                <input
-                  type="checkbox"
-                  checked={isEgyeniChecked}
-                  onChange={(e) => setIsEgyeniChecked(e.target.checked)}
-                />
-                <div className="checkmark"></div>
-              </label>
-              <span>Egyéni</span>
-            </div>
-            <div className="checkbox">
-              <label className="container">
-                <input
-                  type="checkbox"
-                  checked={isCsapatChecked}
-                  onChange={(e) => setIsCsapatChecked(e.target.checked)}
-                />
-                <div className="checkmark"></div>
-              </label>
-              <span>Csapat</span>
-            </div>
-          </div>
-          <div className="helyezes">
-            <span id="category">Helyezés</span>
-            <div className="from-to">
+        <div className={`sorting-container ${!showFilters && "smaller-width"}`}>
+          <div className="menu-btn">
+            <label className="burger" htmlFor="burger">
               <input
-                type="number"
-                placeholder="Tól"
-                value={fromValue}
-                onChange={(e) => setFromValue(e.target.value)}
+                type="checkbox"
+                id="burger"
+                checked={showFilters}
+                onChange={handleCheckboxChange}
               />
-            </div>
-            <div className="from-to">
-              <input
-                type="number"
-                placeholder="Ig"
-                value={toValue}
-                onChange={(e) => setToValue(e.target.value)}
-              />
-            </div>
-            <button onClick={handleHelyezesReset}>Visszaállít</button>
+              <span></span>
+              <span></span>
+              <span></span>
+            </label>
           </div>
+          {showFilters && (
+            <div className="all-filter">
+              <div className="filter">
+                <input
+                  type="text"
+                  placeholder="Keresés..."
+                  value={searchTerm}
+                  onChange={handleSearchChange}
+                />
+              </div>
+              <span id="reset-btn" onClick={handleResetAll}>
+                Alapértelmezett
+              </span>
+              <div className="vtipus">
+                <span id="category">Versenytípus</span>
+                <div className="checkbox">
+                  <label className="container">
+                    <input
+                      type="checkbox"
+                      checked={isTanulmanyiChecked}
+                      onChange={(e) => setIsTanulmanyiChecked(e.target.checked)}
+                    />
+                    <div className="checkmark"></div>
+                  </label>
+                  <span>Tanulmányi</span>
+                </div>
+                <div className="checkbox">
+                  <label className="container">
+                    <input
+                      type="checkbox"
+                      checked={isSportChecked}
+                      onChange={(e) => setIsSportChecked(e.target.checked)}
+                    />
+                    <div className="checkmark"></div>
+                  </label>
+                  <span>Sport</span>
+                </div>
+                <div className="checkbox">
+                  <label className="container">
+                    <input
+                      type="checkbox"
+                      checked={isMuveszetiChecked}
+                      onChange={(e) => setIsMuveszetiChecked(e.target.checked)}
+                    />
+                    <div className="checkmark"></div>
+                  </label>
+                  <span>Művészeti</span>
+                </div>
+              </div>
+              <div className="vszint">
+                <span id="category">Versenyszint</span>
+                <div className="checkbox">
+                  <label className="container">
+                    <input
+                      type="checkbox"
+                      checked={isRegionalisChecked}
+                      onChange={(e) => setIsRegionalisChecked(e.target.checked)}
+                    />
+                    <div className="checkmark"></div>
+                  </label>
+                  <span>Regionális/területi</span>
+                </div>
+                <div className="checkbox">
+                  <label className="container">
+                    <input
+                      type="checkbox"
+                      checked={isOrszagosChecked}
+                      onChange={(e) => setIsOrszagosChecked(e.target.checked)}
+                    />
+                    <div className="checkmark"></div>
+                  </label>
+                  <span>Országos</span>
+                </div>
+                <div className="checkbox">
+                  <label className="container">
+                    <input
+                      type="checkbox"
+                      checked={isNemzetkoziChecked}
+                      onChange={(e) => setIsNemzetkoziChecked(e.target.checked)}
+                    />
+                    <div className="checkmark"></div>
+                  </label>
+                  <span>Nemzetközi</span>
+                </div>
+              </div>
+              <div className="versenyek">
+                <span id="category">Versenyek</span>
+                {dropdownVersenyek.length > 0 && (
+                  <Select
+                    options={dropdownVersenyek}
+                    placeholder=""
+                    value={selectedVerseny}
+                    onChange={handleDropdownChange}
+                    className="custom-select"
+                    styles={customSelectStyles}
+                  />
+                )}
+                <button onClick={handleResetVerseny}>Visszaállít</button>
+              </div>
+              <div className="agazatok">
+                <span id="category">Ágazatok</span>
+                {dropdownAgazatok.length > 0 && (
+                  <Select
+                    options={dropdownAgazatok}
+                    placeholder=""
+                    value={selectedAgazat}
+                    onChange={handleAgazatChange}
+                    className="custom-select"
+                    styles={customSelectStyles}
+                  />
+                )}
+                <button onClick={handleResetAgazat}>Visszaállít</button>
+              </div>
+              <div className="vforma">
+                <span id="category">Versenyforma</span>
+                <div className="checkbox">
+                  <label className="container">
+                    <input
+                      type="checkbox"
+                      checked={isEgyeniChecked}
+                      onChange={(e) => setIsEgyeniChecked(e.target.checked)}
+                    />
+                    <div className="checkmark"></div>
+                  </label>
+                  <span>Egyéni</span>
+                </div>
+                <div className="checkbox">
+                  <label className="container">
+                    <input
+                      type="checkbox"
+                      checked={isCsapatChecked}
+                      onChange={(e) => setIsCsapatChecked(e.target.checked)}
+                    />
+                    <div className="checkmark"></div>
+                  </label>
+                  <span>Csapat</span>
+                </div>
+              </div>
+              <div className="helyezes">
+                <span id="category">Helyezés</span>
+                <div className="from-to">
+                  <input
+                    type="number"
+                    placeholder="Tól"
+                    value={fromValue}
+                    onChange={(e) => setFromValue(e.target.value)}
+                  />
+                </div>
+                <div className="from-to">
+                  <input
+                    type="number"
+                    placeholder="Ig"
+                    value={toValue}
+                    onChange={(e) => setToValue(e.target.value)}
+                  />
+                </div>
+                <button onClick={handleHelyezesReset}>Visszaállít</button>
+              </div>
+            </div>
+          )}
         </div>
         <div className="table-container" ref={tableContainerRef}>
           {success && <div className="success">{success}</div>}
@@ -648,6 +760,17 @@ const Results = () => {
           <path d="M233.4 105.4c12.5-12.5 32.8-12.5 45.3 0l192 192c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L256 173.3 86.6 342.6c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l192-192z"></path>
         </svg>
       </button>
+      <Modal
+        isOpen={showTokenExpiredModal}
+        onRequestClose={closeModalTokenExpired}
+        contentLabel="Token expired"
+        style={modalStyles}
+      >
+        <h2>Jelentkezz be újra!</h2>
+        <div className="modal-buttons">
+          <button onClick={closeModalTokenExpired}>OK</button>
+        </div>
+      </Modal>
     </div>
   );
 };

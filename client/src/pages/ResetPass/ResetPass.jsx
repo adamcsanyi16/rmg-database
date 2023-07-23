@@ -72,7 +72,7 @@ const ResetPass = () => {
         {success && (
           <div className="success">
             {success}
-            <Link to={"/login"}>Vissza a belépéshez</Link>
+            <Link to={"/belepes"}>Vissza a belépéshez</Link>
           </div>
         )}
       </form>

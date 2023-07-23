@@ -16,6 +16,7 @@ import Results from "./pages/Info/Results";
 import Updatecomp from "./pages/Updateinfo/Updatecomp";
 import Addraces from "./pages/Addinfo/Addraces";
 import Reset from "./pages/ResetPass/Reset";
+import Addagazat from "./pages/Addinfo/Addagazat";
 
 function App() {
   const { user } = useAuthContext();
@@ -28,28 +29,32 @@ function App() {
           <Route path="*" element={<Notfound />} />
           <Route path="/" element={<Home />} />
           <Route
-            path="/register"
+            path="/regisztracio"
             element={!user ? <Registration /> : <Navigate to="/eredmenyek" />}
           />
           <Route
-            path="/login"
+            path="/belepes"
             element={!user ? <Login /> : <Navigate to="/eredmenyek" />}
           />
           <Route
             path="/eredmenyekfelvetel"
-            element={user ? <Addcomp /> : <Navigate to="/login" />}
+            element={user ? <Addcomp /> : <Navigate to="/belepes" />}
+          />
+          <Route
+            path="/agazatfelvetel"
+            element={user ? <Addagazat /> : <Navigate to="/belepes" />}
           />
           <Route
             path="/versenyfelvetel"
-            element={user ? <Addraces /> : <Navigate to="/login" />}
+            element={user ? <Addraces /> : <Navigate to="/belepes" />}
           />
           <Route
             path="/eredmenyek/:id"
-            element={user ? <Updatecomp /> : <Navigate to="/login" />}
+            element={user ? <Updatecomp /> : <Navigate to="/belepes" />}
           />
           <Route
             path="/eredmenyek"
-            element={user ? <Results /> : <Navigate to="/login" />}
+            element={user ? <Results /> : <Navigate to="/belepes" />}
           />
           <Route path="/valtoztat" element={<Reset />} />
         </Routes>
