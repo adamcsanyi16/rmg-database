@@ -16,6 +16,8 @@ const Addagazat = () => {
       return;
     }
 
+    const url = "https://radnoti.adaptable.app/";
+
     const adatok = {
       agazat,
     };
@@ -25,7 +27,7 @@ const Addagazat = () => {
       setError(null);
       setSuccess(null);
 
-      const adat = await fetch("http://localhost:3500/agazat", {
+      const adat = await fetch(url + "/agazat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

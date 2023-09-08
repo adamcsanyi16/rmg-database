@@ -7,6 +7,7 @@ import Select from "react-select";
 
 const Results = () => {
   const { logout } = useLogout();
+  const url = "https://radnoti.adaptable.app/";
 
   //VARIABLES
   const [results, setResults] = useState([]);
@@ -63,7 +64,7 @@ const Results = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:3500/isAdmin", {
+        const response = await fetch(url + "/isAdmin", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -90,7 +91,7 @@ const Results = () => {
   useEffect(() => {
     const fetchDropdownOptions = async () => {
       try {
-        const adat = await fetch("http://localhost:3500/verseny", {
+        const adat = await fetch(url + "/verseny", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -125,7 +126,7 @@ const Results = () => {
   useEffect(() => {
     const fetchDropdownAgazatok = async () => {
       try {
-        const adat = await fetch("http://localhost:3500/agazat", {
+        const adat = await fetch(url + "/agazat", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -229,7 +230,7 @@ const Results = () => {
       }
 
       try {
-        const adat = await fetch("http://localhost:3500/eredmeny", {
+        const adat = await fetch(url + "/eredmeny", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${user.token}`,
@@ -393,7 +394,7 @@ const Results = () => {
     const { _id: id } = item;
     const adatTorol = async () => {
       try {
-        const toroltAdat = await fetch("http://localhost:3500/eredmeny", {
+        const toroltAdat = await fetch(url + "/eredmeny", {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",

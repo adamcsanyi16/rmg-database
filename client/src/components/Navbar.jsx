@@ -8,11 +8,12 @@ const Navbar = () => {
   const { user } = useAuthContext();
   const [isAdmin, setIsAdmin] = useState(false);
   const [activeLink, setActiveLink] = useState("");
+  const url = "https://radnoti.adaptable.app/";
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:3500/isAdmin", {
+        const response = await fetch(url + "/isAdmin", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

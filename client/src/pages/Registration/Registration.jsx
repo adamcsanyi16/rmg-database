@@ -10,6 +10,7 @@ const Registration = () => {
   const [success, setSuccess] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const { dispatch } = useAuthContext();
+  const url = "https://radnoti.adaptable.app/";
 
   const navigate = useNavigate();
 
@@ -17,7 +18,7 @@ const Registration = () => {
     setIsLoading(true);
     setError(null);
 
-    const adat = await fetch("http://localhost:3500/regisztral", {
+    const adat = await fetch(url + "/regisztral", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

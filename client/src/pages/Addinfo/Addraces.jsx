@@ -16,6 +16,8 @@ const Addraces = () => {
       return;
     }
 
+    const url = "https://radnoti.adaptable.app/";
+
     const adatok = {
       verseny,
     };
@@ -25,7 +27,7 @@ const Addraces = () => {
       setError(null);
       setSuccess(null);
 
-      const adat = await fetch("http://localhost:3500/verseny", {
+      const adat = await fetch(url + "/verseny", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

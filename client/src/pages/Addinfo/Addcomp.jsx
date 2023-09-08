@@ -19,6 +19,7 @@ function Addcomp() {
   const [dropdownVersenyek, setDropdownVersenyek] = useState([]);
   const [dropdownAgazatok, setDropdownAgazatok] = useState([]);
   const { user } = useAuthContext();
+  const url = "https://radnoti.adaptable.app/";
 
   const feldolgoz = (event) => {
     event.preventDefault();
@@ -46,7 +47,7 @@ function Addcomp() {
       setError(null);
       setSuccess(null);
 
-      const adat = await fetch("http://localhost:3500/eredmeny", {
+      const adat = await fetch(url + "/eredmeny", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -76,7 +77,7 @@ function Addcomp() {
   useEffect(() => {
     const fetchDropdownOptions = async () => {
       try {
-        const adat = await fetch("http://localhost:3500/verseny", {
+        const adat = await fetch(url + "/verseny", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -111,7 +112,7 @@ function Addcomp() {
   useEffect(() => {
     const fetchDropdownAgaztok = async () => {
       try {
-        const adat = await fetch("http://localhost:3500/agazat", {
+        const adat = await fetch(url + "/agazat", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

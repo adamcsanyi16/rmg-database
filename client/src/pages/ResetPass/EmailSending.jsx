@@ -8,6 +8,7 @@ const EmailSending = () => {
   const [success, setSuccess] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const url = "https://radnoti.adaptable.app/";
 
   function elkuld() {
     setIsLoading(true);
@@ -18,7 +19,7 @@ const EmailSending = () => {
     setUniversalEmail(email);
 
     axios
-      .post("http://localhost:3500/emailkuldes", {
+      .post(url + "/emailkuldes", {
         KOD: kod,
         email: email,
       })

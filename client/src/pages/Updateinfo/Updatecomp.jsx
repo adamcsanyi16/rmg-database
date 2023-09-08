@@ -19,11 +19,12 @@ function Updatecomp() {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useAuthContext();
+  const url = "https://radnoti.adaptable.app/";
 
   useEffect(() => {
     const data = async () => {
       try {
-        const adat = await fetch("http://localhost:3500/eredmeny", {
+        const adat = await fetch(url + "/eredmeny", {
           headers: {
             Authorization: `Bearer ${user.token}`,
           },
@@ -83,7 +84,7 @@ function Updatecomp() {
       setError(null);
       setSuccess(null);
 
-      const adat = await fetch("http://localhost:3500/eredmeny", {
+      const adat = await fetch(url + "/eredmeny", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

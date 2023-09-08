@@ -9,6 +9,7 @@ const ResetPass = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const url = "https://radnoti.adaptable.app/";
 
   const valtoztat = (event) => {
     event.preventDefault();
@@ -18,7 +19,7 @@ const ResetPass = () => {
       setError(null);
       setSuccess(null);
 
-      const adat = await fetch("http://localhost:3500/valtoztat", {
+      const adat = await fetch(url + "/valtoztat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

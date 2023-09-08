@@ -10,13 +10,14 @@ const CodeAuth = () => {
   const [KODinput, setKODinput] = useState([0, 0, 0, 0]);
   const [success, setSuccess] = useState(null);
   const [error, setError] = useState(null);
+  const url = "https://radnoti.adaptable.app/";
 
   function ujrakuld() {
     if (disable) {
       return;
     }
     axios
-      .post("http://localhost:3500/emailkuldes", {
+      .post(url + "/emailkuldes", {
         KOD: KOD,
         email: universalEmail,
       })
