@@ -84,7 +84,7 @@ const Login = () => {
           <Link to={"/valtoztat"}>Elfejtettem a jelszavam</Link>
         </div>
         <div className="button-container">
-          <Link to={"/register"}>Még nincs fiókod? Regisztrálj!</Link>
+          <Link to={"/regisztracio"}>Még nincs fiókod? Regisztrálj!</Link>
           <button type="submit" disabled={isLoading}>
             Belépés
           </button>

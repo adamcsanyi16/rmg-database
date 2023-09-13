@@ -80,7 +80,7 @@ const Registration = () => {
           />
         </div>
         <div className="button-container">
-          <Link to={"/login"}>Már van fiókod? Jelentkezz be!</Link>
+          <Link to={"/belepes"}>Már van fiókod? Jelentkezz be!</Link>
           <button type="submit" disabled={isLoading}>
             Regisztráció
           </button>
