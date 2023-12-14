@@ -1,6 +1,7 @@
 import { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import { RecoveryContext } from "./Reset";
+import config from "../../components/config";
 
 const ResetPass = () => {
   const { universalEmail } = useContext(RecoveryContext);
@@ -9,7 +10,7 @@ const ResetPass = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const url = "https://radnoti.adaptable.app/";
+  const url = config.URL;
 
   const valtoztat = (event) => {
     event.preventDefault();

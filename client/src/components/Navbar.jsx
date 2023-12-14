@@ -2,13 +2,14 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useLogout } from "../hooks/useLogout";
 import { useAuthContext } from "../hooks/useAuthContext";
+import config from "./config";
 
 const Navbar = () => {
   const { logout } = useLogout();
   const { user } = useAuthContext();
   const [isAdmin, setIsAdmin] = useState(false);
   const [activeLink, setActiveLink] = useState("");
-  const url = "https://radnoti.adaptable.app/";
+  const url = config.URL;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -67,7 +68,7 @@ const Navbar = () => {
                 id={activeLink === "versenyfelvetel" ? "active" : ""}
                 onClick={() => handleLinkClick("versenyfelvetel")}
               >
-                Versenyfelvétel
+                Verseny felvétel
               </Link>
             )}
             {isAdmin && (
@@ -76,7 +77,16 @@ const Navbar = () => {
                 id={activeLink === "agazatfelvetel" ? "active" : ""}
                 onClick={() => handleLinkClick("agazatfelvetel")}
               >
-                Ágazatfelvétel
+                Ágazat felvétel
+              </Link>
+            )}
+            {isAdmin && (
+              <Link
+                to={"/tanulofelvetel"}
+                id={activeLink === "tanulofelvetel" ? "active" : ""}
+                onClick={() => handleLinkClick("tanulofelvetel")}
+              >
+                Tanuló felvétel
               </Link>
             )}
             <Link

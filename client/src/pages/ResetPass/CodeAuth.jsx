@@ -2,6 +2,7 @@ import { useState, useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { RecoveryContext } from "./Reset";
 import axios from "axios";
+import config from "../../components/config";
 
 const CodeAuth = () => {
   const { universalEmail, setPage, KOD } = useContext(RecoveryContext);
@@ -10,7 +11,7 @@ const CodeAuth = () => {
   const [KODinput, setKODinput] = useState([0, 0, 0, 0]);
   const [success, setSuccess] = useState(null);
   const [error, setError] = useState(null);
-  const url = "https://radnoti.adaptable.app/";
+  const url = config.URL;
 
   function ujrakuld() {
     if (disable) {

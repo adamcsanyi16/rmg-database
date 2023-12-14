@@ -24,14 +24,13 @@ body {
 .navbar-container {
   background-image: linear-gradient(#716826c9, #998d33c9, #b9ab44c9);
   padding: 1em;
-  margin: 0.2rem;
   display: grid;
   grid-template-columns: 0.2fr 2.8fr;
-  border-radius: 1rem;
-  -webkit-border-radius: 1rem;
-  -moz-border-radius: 1rem;
-  -ms-border-radius: 1rem;
-  -o-border-radius: 1rem;
+  border-radius: 0rem 0rem 1rem 1rem;
+  -webkit-border-radius: 0rem 0rem 1rem 1rem;
+  -moz-border-radius: 0rem 0rem 1rem 1rem;
+  -ms-border-radius: 0rem 0rem 1rem 1rem;
+  -o-border-radius: 0rem 0rem 1rem 1rem;
 }
 
 .logo {
@@ -192,6 +191,9 @@ form {
 
 .addcomp {
   margin-top: 100px;
+}
+
+#addcomp {
   margin-bottom: 150px;
 }
 
@@ -336,8 +338,11 @@ button:active {
 .button-row {
   display: grid;
   grid-template-columns: 50% 50%;
-  gap: 5px;
   margin-top: 20px;
+}
+
+.button-row button {
+  scale: 0.85;
 }
 
 .forgot-password {
@@ -502,14 +507,11 @@ button:active {
   border: thin solid #998d33c9;
 }
 
-.helyezes button {
-  margin-top: 0.5rem;
-  width: 200px;
-}
-
 .versenyek button,
-.agazatok button {
+.agazatok button,
+.helyezes button {
   margin-top: 1rem;
+  scale: 0.9;
   width: 200px;
 }
 
@@ -648,6 +650,19 @@ button:active {
 .styled-table tbody tr.active-row {
   font-weight: bold;
   color: #b9ab44c9;
+}
+
+.saveButton {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.saveButton button {
+  scale: 0.9;
+}
+
+#tanulok {
+  width: 50px;
 }
 
 /*MENU BTN*/
@@ -1029,13 +1044,97 @@ h2 {
     font-size: 14px;
   }
 
-  .versenyek button,
-  .agazatok button,
-  .helyezes button {
-    width: fit-content;
-  }
-
   #category {
     font-size: 14px;
   }
+}
+
+/*LOADER*/
+.loader {
+  width: 48px;
+  height: 48px;
+  margin: auto;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  position: fixed;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 390px;
+  scale: 2.5;
+  z-index: 9999;
+}
+
+.loader:before {
+  content: "";
+  width: 48px;
+  height: 5px;
+  background: #7168269a;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  border-radius: 50%;
+  animation: shadow324 0.5s linear infinite;
+}
+
+.loader:after {
+  content: "";
+  width: 100%;
+  height: 100%;
+  background: #b9ab44c9;
+  border: 1px solid whitesmoke;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 4px;
+  animation: jump7456 0.5s linear infinite;
+}
+
+@keyframes jump7456 {
+  15% {
+    border-bottom-right-radius: 3px;
+  }
+
+  25% {
+    transform: translateY(9px) rotate(22.5deg);
+  }
+
+  50% {
+    transform: translateY(18px) scale(1, 0.9) rotate(45deg);
+    border-bottom-right-radius: 40px;
+  }
+
+  75% {
+    transform: translateY(9px) rotate(67.5deg);
+  }
+
+  100% {
+    transform: translateY(0) rotate(90deg);
+  }
+}
+
+@keyframes shadow324 {
+  0%,
+  100% {
+    transform: scale(1, 1);
+  }
+
+  50% {
+    transform: scale(1.2, 1);
+  }
+}
+
+/*FILE INPUT*/
+.multiAdding {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+  padding: 10px;
+}
+
+.multiAdding button {
+  scale: 0.8;
 }

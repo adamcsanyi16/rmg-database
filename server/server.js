@@ -3,13 +3,19 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const mongoose = require("mongoose");
+const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
+const ExcelJS = require("exceljs");
+const multer = require("multer");
+const fs = require("fs");
+
+const requireAuth = require("./middlewares/requireAuth");
+
 const User = require("./models/User");
 const Race = require("./models/Competition");
 const Comps = require("./models/Onlycomps");
-const jwt = require("jsonwebtoken");
-const nodemailer = require("nodemailer");
-const requireAuth = require("./middlewares/requireAuth");
 const Agazat = require("./models/Agazat");
+const Student = require("./models/Student");
 
 //HTML EMAIL FOR REG
 const htmlRegister = `
@@ -113,6 +119,10 @@ const sendEmail = ({ email, KOD }) => {
   });
 };
 
+//MULTER CONFIG
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
 //TOKEN CREATION
 const createToken = (_id, isAdmin) => {
   return jwt.sign({ _id, isAdmin }, process.env.SECRET, {
@@ -214,7 +224,7 @@ app.post("/valtoztat", async (req, res) => {
 
 app.use(requireAuth);
 
-//RACE
+//RESULTS
 app.get("/eredmeny", async (req, res) => {
   try {
     const race = await Race.find({});
@@ -311,6 +321,42 @@ app.delete("/eredmeny", async (req, res) => {
   }
 });
 
+app.post("/eredmenyMent", async (req, res) => {
+  try {
+    const dataArray = req.body.filteredResults;
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Data");
+
+    const headerRow = Object.keys(dataArray[0]).filter(
+      (key) => !["_id", "nev", "createdAt", "updatedAt", "__v"].includes(key)
+    );
+    worksheet.addRow(headerRow);
+
+    dataArray.forEach((data) => {
+      const values = Object.keys(data)
+        .filter(
+          (key) =>
+            !["_id", "nev", "createdAt", "updatedAt", "__v"].includes(key)
+        )
+        .map((key) => data[key]);
+      worksheet.addRow(values);
+    });
+
+    const buffer = await workbook.xlsx.writeBuffer();
+
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+    res.setHeader("Content-Disposition", "attachment; filename=data.xlsx");
+    res.send(buffer);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Internal server error" });
+  }
+});
+
 app.get("/verseny", async (req, res) => {
   try {
     const comps = await Comps.find({});
@@ -333,6 +379,19 @@ app.post("/verseny", async (req, res) => {
   }
 });
 
+app.post("/uploadVerseny", upload.single("file"), async (req, res) => {
+  try {
+    const fileContent = req.file.buffer.toString();
+    const versenyek = fileContent.split(";").map((verseny) => ({ verseny }));
+
+    await Comps.insertMany(versenyek);
+
+    res.status(200).send({ msg: "Sikeres verseny feltöltés!" });
+  } catch (error) {
+    res.status(500).send({ msg: "Valami hiba történt" + error.message });
+  }
+});
+
 app.get("/agazat", async (req, res) => {
   try {
     const agazat = await Agazat.find({});
@@ -352,6 +411,54 @@ app.post("/agazat", async (req, res) => {
     res.status(200).json({ msg: "Sikeres ágazat létrehozás!" });
   } catch (error) {
     res.status(500).json({ msg: "Valami hiba történt" + error.message });
+  }
+});
+
+app.post("/uploadAgazat", upload.single("file"), async (req, res) => {
+  try {
+    const fileContent = req.file.buffer.toString();
+    const agazatok = fileContent.split(";").map((agazat) => ({ agazat }));
+
+    await Agazat.insertMany(agazatok);
+
+    res.status(200).send({ msg: "Sikeres ágazat feltöltés!" });
+  } catch (error) {
+    res.status(500).send({ msg: "Valami hiba történt" + error.message });
+  }
+});
+
+app.get("/student", async (req, res) => {
+  try {
+    const student = await Student.find({});
+    res.status(200).json({ student });
+  } catch (error) {
+    res.status(500).json({ msg: "Valami hiba történt" + error.message });
+  }
+});
+
+app.post("/student", async (req, res) => {
+  try {
+    const { nev } = req.body;
+    const newStudent = new Student({
+      nev,
+    });
+    await newStudent.save();
+    res.status(200).json({ msg: "Sikeres tanuló feltöltés!" });
+  } catch (error) {
+    res.status(500).json({ msg: "Valami hiba történt" + error.message });
+  }
+});
+
+app.post("/uploadStudent", upload.single("file"), async (req, res) => {
+  try {
+    const fileContent = req.file.buffer.toString();
+    const students = fileContent.split(";").map((nev) => ({ nev }));
+
+    await Student.insertMany(students);
+
+    res.status(200).send({ msg: "Sikeres volt a tanulók feltöltése!" });
+  } catch (error) {
+    res.status(500).send({ msg: "Valami hiba történt" + error.message });
   }
 });
 

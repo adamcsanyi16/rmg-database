@@ -1,6 +1,7 @@
 import { useState, useContext } from "react";
 import { RecoveryContext } from "./Reset";
 import axios from "axios";
+import config from "../../components/config";
 
 const EmailSending = () => {
   const { setUniversalEmail, setPage, setKOD } = useContext(RecoveryContext);
@@ -8,7 +9,7 @@ const EmailSending = () => {
   const [success, setSuccess] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const url = "https://radnoti.adaptable.app/";
+  const url = config.URL;
 
   function elkuld() {
     setIsLoading(true);

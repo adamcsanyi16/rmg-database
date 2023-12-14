@@ -4,15 +4,18 @@ import { useAuthContext } from "../../hooks/useAuthContext";
 import { useLogout } from "../../hooks/useLogout";
 import Modal from "react-modal";
 import Select from "react-select";
+import { saveAs } from "file-saver";
+import config from "../../components/config";
 
 const Results = () => {
   const { logout } = useLogout();
-  const url = "https://radnoti.adaptable.app/";
+  const url = config.URL;
 
   //VARIABLES
   const [results, setResults] = useState([]);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [filteredResults, setFilteredResults] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -224,6 +227,8 @@ const Results = () => {
   //LOADING DATA
   useEffect(() => {
     const data = async () => {
+      setIsLoading(true);
+      setError(null);
       if (!user) {
         setError("Nem vagy bejelentkezve!");
         return;
@@ -240,9 +245,11 @@ const Results = () => {
         if (adat.ok) {
           const jsonData = await adat.json();
           setResults(jsonData.msg);
+          setIsLoading(false);
         } else {
           const jsonData = await adat.json();
           setError(jsonData.msg);
+          setIsLoading(false);
         }
       } catch (error) {
         console.log(error);
@@ -462,9 +469,34 @@ const Results = () => {
     setShowTokenExpiredModal(false);
   };
 
+  const handleExcelSave = () => {
+    fetch(url + "/eredmenyMent", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${user.token}`,
+      },
+      body: JSON.stringify({ filteredResults }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          setError(response.msg);
+        }
+        console.log(response.msg);
+        return response.blob();
+      })
+      .then((blob) => {
+        saveAs(blob, "data.xlsx");
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
+
   return (
     <div className="results">
       <div className="results-wrap">
+        {!isLoading ? <div></div> : <div className="loader"></div>}
         <div className={`sorting-container ${!showFilters && "smaller-width"}`}>
           <div className="menu-btn">
             <label className="burger" htmlFor="burger">
@@ -497,9 +529,15 @@ const Results = () => {
                 <div className="checkbox">
                   <label className="container">
                     <input
-                      type="checkbox"
+                      id="tanulmanyi"
+                      type="radio"
+                      name="vtipus"
                       checked={isTanulmanyiChecked}
-                      onChange={(e) => setIsTanulmanyiChecked(e.target.checked)}
+                      onChange={(e) => {
+                        setIsTanulmanyiChecked(e.target.checked);
+                        setIsSportChecked(false);
+                        setIsMuveszetiChecked(false);
+                      }}
                     />
                     <div className="checkmark"></div>
                   </label>
@@ -508,9 +546,15 @@ const Results = () => {
                 <div className="checkbox">
                   <label className="container">
                     <input
-                      type="checkbox"
+                      id="sport"
+                      type="radio"
+                      name="vtipus"
                       checked={isSportChecked}
-                      onChange={(e) => setIsSportChecked(e.target.checked)}
+                      onChange={(e) => {
+                        setIsTanulmanyiChecked(false);
+                        setIsSportChecked(e.target.checked);
+                        setIsMuveszetiChecked(false);
+                      }}
                     />
                     <div className="checkmark"></div>
                   </label>
@@ -519,9 +563,15 @@ const Results = () => {
                 <div className="checkbox">
                   <label className="container">
                     <input
-                      type="checkbox"
+                      id="muveszeti"
+                      type="radio"
+                      name="vtipus"
                       checked={isMuveszetiChecked}
-                      onChange={(e) => setIsMuveszetiChecked(e.target.checked)}
+                      onChange={(e) => {
+                        setIsTanulmanyiChecked(false);
+                        setIsSportChecked(false);
+                        setIsMuveszetiChecked(e.target.checked);
+                      }}
                     />
                     <div className="checkmark"></div>
                   </label>
@@ -533,9 +583,15 @@ const Results = () => {
                 <div className="checkbox">
                   <label className="container">
                     <input
-                      type="checkbox"
+                      id="regionalis"
+                      type="radio"
+                      name="vszint"
                       checked={isRegionalisChecked}
-                      onChange={(e) => setIsRegionalisChecked(e.target.checked)}
+                      onChange={(e) => {
+                        setIsRegionalisChecked(e.target.checked);
+                        setIsOrszagosChecked(false);
+                        setIsNemzetkoziChecked(false);
+                      }}
                     />
                     <div className="checkmark"></div>
                   </label>
@@ -544,9 +600,15 @@ const Results = () => {
                 <div className="checkbox">
                   <label className="container">
                     <input
-                      type="checkbox"
+                      id="orszagos"
+                      type="radio"
+                      name="vszint"
                       checked={isOrszagosChecked}
-                      onChange={(e) => setIsOrszagosChecked(e.target.checked)}
+                      onChange={(e) => {
+                        setIsRegionalisChecked(false);
+                        setIsOrszagosChecked(e.target.checked);
+                        setIsNemzetkoziChecked(false);
+                      }}
                     />
                     <div className="checkmark"></div>
                   </label>
@@ -555,9 +617,15 @@ const Results = () => {
                 <div className="checkbox">
                   <label className="container">
                     <input
-                      type="checkbox"
+                      id="nemzetkozi"
+                      type="radio"
+                      name="vszint"
                       checked={isNemzetkoziChecked}
-                      onChange={(e) => setIsNemzetkoziChecked(e.target.checked)}
+                      onChange={(e) => {
+                        setIsRegionalisChecked(false);
+                        setIsOrszagosChecked(false);
+                        setIsNemzetkoziChecked(e.target.checked);
+                      }}
                     />
                     <div className="checkmark"></div>
                   </label>
@@ -597,9 +665,14 @@ const Results = () => {
                 <div className="checkbox">
                   <label className="container">
                     <input
-                      type="checkbox"
+                      id="egyeni"
+                      type="radio"
+                      name="vforma"
                       checked={isEgyeniChecked}
-                      onChange={(e) => setIsEgyeniChecked(e.target.checked)}
+                      onChange={(e) => {
+                        setIsEgyeniChecked(e.target.checked);
+                        setIsCsapatChecked(false);
+                      }}
                     />
                     <div className="checkmark"></div>
                   </label>
@@ -608,9 +681,14 @@ const Results = () => {
                 <div className="checkbox">
                   <label className="container">
                     <input
-                      type="checkbox"
+                      id="csapat"
+                      type="radio"
+                      name="vforma"
                       checked={isCsapatChecked}
-                      onChange={(e) => setIsCsapatChecked(e.target.checked)}
+                      onChange={(e) => {
+                        setIsEgyeniChecked(false);
+                        setIsCsapatChecked(e.target.checked);
+                      }}
                     />
                     <div className="checkmark"></div>
                   </label>
@@ -655,7 +733,7 @@ const Results = () => {
                     <th>Ágazat</th>
                     <th>Verseny formája</th>
                     <th>Helyezés</th>
-                    <th>Tanulók</th>
+                    <th id="tanulok">Tanulók</th>
                     <th>Osztály</th>
                     <th>Felkészítő tanár(ok)</th>
                     {isAdmin && <th></th>}
@@ -672,7 +750,7 @@ const Results = () => {
                       <td>{result.agazat}</td>
                       <td>{result.vforma}</td>
                       <td>{result.helyezes}</td>
-                      <td>{result.tanulok}</td>
+                      <td id="tanulok">{result.tanulok}</td>
                       <td>{result.osztaly}</td>
                       <td>{result.tanarok}</td>
                       {isAdmin && (
@@ -720,6 +798,9 @@ const Results = () => {
                   ))}
                 </tbody>
               </table>
+              <div className="saveButton">
+                <button onClick={handleExcelSave}>Mentés</button>
+              </div>
               <p>Oldal: {currentPage}</p>
               <div className="toggle-buttons">
                 {pageNumbers.map((pageNumber) => (

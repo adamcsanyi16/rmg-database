@@ -17,6 +17,7 @@ import Updatecomp from "./pages/Updateinfo/Updatecomp";
 import Addraces from "./pages/Addinfo/Addraces";
 import Reset from "./pages/ResetPass/Reset";
 import Addagazat from "./pages/Addinfo/Addagazat";
+import Addstudents from "./pages/Addinfo/Addstudents";
 
 function App() {
   const { user } = useAuthContext();
@@ -43,6 +44,10 @@ function App() {
           <Route
             path="/agazatfelvetel"
             element={user ? <Addagazat /> : <Navigate to="/belepes" />}
+          />
+          <Route
+            path="/tanulofelvetel"
+            element={user ? <Addstudents /> : <Navigate to="/belepes" />}
           />
           <Route
             path="/versenyfelvetel"

@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useAuthContext } from "./useAuthContext";
 import { useNavigate } from "react-router-dom";
+import config from "../components/config";
 
 export const useRegister = () => {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(null);
   const { dispatch } = useAuthContext();
-  const url = "https://radnoti.adaptable.app/";
+  const url = config.URL;
 
   const navigate = useNavigate();
 

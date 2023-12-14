@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../hooks/useAuthContext";
+import config from "../../components/config";
 
 const Registration = () => {
   const [email, setEmail] = useState("");
@@ -10,7 +11,7 @@ const Registration = () => {
   const [success, setSuccess] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const { dispatch } = useAuthContext();
-  const url = "https://radnoti.adaptable.app/";
+  const url = config.URL;
 
   const navigate = useNavigate();
 

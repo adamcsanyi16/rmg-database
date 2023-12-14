@@ -1,12 +1,17 @@
 import { useState } from "react";
 import { useAuthContext } from "../../hooks/useAuthContext";
+import config from "../../components/config";
 
 const Addagazat = () => {
-  const [agazat, setAgazat] = useState("");
   const [success, setSuccess] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useAuthContext();
+
+  const [agazat, setAgazat] = useState("");
+  const [file, setFile] = useState(null);
+
+  const url = config.URL;
 
   const feldolgoz = (event) => {
     event.preventDefault();
@@ -15,8 +20,6 @@ const Addagazat = () => {
       setError("Nem vagy bejelentkezve!");
       return;
     }
-
-    const url = "https://radnoti.adaptable.app/";
 
     const adatok = {
       agazat,
@@ -57,10 +60,43 @@ const Addagazat = () => {
     setSuccess(null);
   };
 
+  const handleFileChange = (event) => {
+    setFile(event.target.files[0]);
+  };
+
+  const handleUpload = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const adat = await fetch(url + "/uploadAgazat", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+        body: formData,
+      });
+
+      if (adat.ok) {
+        const response = await adat.json();
+        setIsLoading(false);
+        setSuccess(response.msg);
+      } else {
+        const response = await adat.json();
+        setIsLoading(false);
+        setError(response.msg);
+      }
+    } catch (error) {
+      setError(error);
+    }
+  };
+
   return (
     <div className="form-container">
-      <form onSubmit={feldolgoz} className="addcomp">
-        <h2>Vedd fel az ágazatot!</h2>
+      <div className="agazatContainer">
+        {!isLoading ? <div></div> : <div className="loader"></div>}
+        <form onSubmit={feldolgoz} className="addcomp">
+        <h2>Vegyél fel egy ágazatot!</h2>
         <div className="form-row">
           <input
             type="text"
@@ -81,6 +117,11 @@ const Addagazat = () => {
         {error && <div className="error">{error}</div>}
         {success && <div className="success">{success}</div>}
       </form>
+        <div className="multiAdding">
+          <input type="file" onChange={handleFileChange} />
+          <button onClick={handleUpload}>Feltölt</button>
+        </div>
+      </div>
     </div>
   );
 };

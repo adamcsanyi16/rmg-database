@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import Select from "react-select";
+import config from "../../components/config";
 
 function Addcomp() {
   const [nev, setNev] = useState("");
@@ -19,7 +20,7 @@ function Addcomp() {
   const [dropdownVersenyek, setDropdownVersenyek] = useState([]);
   const [dropdownAgazatok, setDropdownAgazatok] = useState([]);
   const { user } = useAuthContext();
-  const url = "https://radnoti.adaptable.app/";
+  const url = config.URL;
 
   const feldolgoz = (event) => {
     event.preventDefault();
@@ -204,169 +205,172 @@ function Addcomp() {
 
   return (
     <div className="form-container">
-      <form onSubmit={feldolgoz} className="addcomp">
-        <h2>Vedd fel az eredményt!</h2>
-        <div className="form-row">
-          <input
-            type="text"
-            placeholder="Felvevő email címe"
-            value={nev}
-            className="input"
-            onChange={(e) => setNev(e.target.value)}
-          />
-        </div>
-        <p>Verseny típusa</p>
-        <div className="radio-inputs">
-          <label className="radio">
+      <div className="addContainer">
+        {!isLoading ? <div></div> : <div className="loader"></div>}
+        <form onSubmit={feldolgoz} className="addcomp" id="addcomp">
+          <h2>Vedd fel az eredményt!</h2>
+          <div className="form-row">
             <input
-              type="radio"
-              name="vtipus"
-              value="tanulmányi"
-              onChange={(e) => setVtipus(e.target.value)}
+              type="text"
+              placeholder="Felvevő email címe"
+              value={nev}
+              className="input"
+              onChange={(e) => setNev(e.target.value)}
             />
-            <span className="name">Tanulmányi</span>
-          </label>
-          <label className="radio">
-            <input
-              type="radio"
-              name="vtipus"
-              value="sport"
-              onChange={(e) => setVtipus(e.target.value)}
-            />
-            <span className="name">Sport</span>
-          </label>
+          </div>
+          <p>Verseny típusa</p>
+          <div className="radio-inputs">
+            <label className="radio">
+              <input
+                type="radio"
+                name="vtipus"
+                value="tanulmányi"
+                onChange={(e) => setVtipus(e.target.value)}
+              />
+              <span className="name">Tanulmányi</span>
+            </label>
+            <label className="radio">
+              <input
+                type="radio"
+                name="vtipus"
+                value="sport"
+                onChange={(e) => setVtipus(e.target.value)}
+              />
+              <span className="name">Sport</span>
+            </label>
 
-          <label className="radio">
-            <input
-              type="radio"
-              name="vtipus"
-              value="művészeti"
-              onChange={(e) => setVtipus(e.target.value)}
-            />
-            <span className="name">Művészeti</span>
-          </label>
-        </div>
-        <p>Verseny szintje</p>
-        <div className="radio-inputs">
-          <label className="radio">
-            <input
-              type="radio"
-              name="vszint"
-              value="nemzetközi"
-              onChange={(e) => setVszint(e.target.value)}
-            />
-            <span className="name">Nemzetközi</span>
-          </label>
-          <label className="radio">
-            <input
-              type="radio"
-              name="vszint"
-              value="országos"
-              onChange={(e) => setVszint(e.target.value)}
-            />
-            <span className="name">Országos</span>
-          </label>
+            <label className="radio">
+              <input
+                type="radio"
+                name="vtipus"
+                value="művészeti"
+                onChange={(e) => setVtipus(e.target.value)}
+              />
+              <span className="name">Művészeti</span>
+            </label>
+          </div>
+          <p>Verseny szintje</p>
+          <div className="radio-inputs">
+            <label className="radio">
+              <input
+                type="radio"
+                name="vszint"
+                value="nemzetközi"
+                onChange={(e) => setVszint(e.target.value)}
+              />
+              <span className="name">Nemzetközi</span>
+            </label>
+            <label className="radio">
+              <input
+                type="radio"
+                name="vszint"
+                value="országos"
+                onChange={(e) => setVszint(e.target.value)}
+              />
+              <span className="name">Országos</span>
+            </label>
 
-          <label className="radio">
+            <label className="radio">
+              <input
+                type="radio"
+                name="vszint"
+                value="regionális/területi"
+                onChange={(e) => setVszint(e.target.value)}
+              />
+              <span className="name">Regionális/területi</span>
+            </label>
+          </div>
+          <div className="form-row">
+            {dropdownVersenyek.length > 0 && (
+              <Select
+                placeholder="Verseny neve"
+                options={dropdownVersenyek}
+                onChange={handleDropdownChange}
+                className="custom-select"
+                styles={customSelectStyles}
+              />
+            )}
+          </div>
+          <div className="form-row">
+            {dropdownAgazatok.length > 0 && (
+              <Select
+                placeholder="Ágazatok"
+                options={dropdownAgazatok}
+                onChange={handleAgazatChange}
+                className="custom-select"
+                styles={customSelectStyles}
+              />
+            )}
+          </div>
+          <p>Verseny formája</p>
+          <div className="radio-inputs">
+            <label className="radio">
+              <input
+                type="radio"
+                name="vforma"
+                value="egyéni"
+                onChange={(e) => setVforma(e.target.value)}
+              />
+              <span className="name">Egyéni</span>
+            </label>
+            <label className="radio">
+              <input
+                type="radio"
+                name="vforma"
+                value="csapat"
+                onChange={(e) => setVforma(e.target.value)}
+              />
+              <span className="name">Csapat</span>
+            </label>
+          </div>
+          <div className="form-row">
             <input
-              type="radio"
-              name="vszint"
-              value="regionális/területi"
-              onChange={(e) => setVszint(e.target.value)}
+              type="text"
+              placeholder="Elért helyezés"
+              value={helyezes}
+              className="input"
+              onChange={(e) => setHelyezes(e.target.value)}
             />
-            <span className="name">Regionális/területi</span>
-          </label>
-        </div>
-        <div className="form-row">
-          {dropdownVersenyek.length > 0 && (
-            <Select
-              placeholder="Verseny neve"
-              options={dropdownVersenyek}
-              onChange={handleDropdownChange}
-              className="custom-select"
-              styles={customSelectStyles}
-            />
-          )}
-        </div>
-        <div className="form-row">
-          {dropdownAgazatok.length > 0 && (
-            <Select
-              placeholder="Ágazatok"
-              options={dropdownAgazatok}
-              onChange={handleAgazatChange}
-              className="custom-select"
-              styles={customSelectStyles}
-            />
-          )}
-        </div>
-        <p>Verseny formája</p>
-        <div className="radio-inputs">
-          <label className="radio">
+          </div>
+          <div className="form-row">
             <input
-              type="radio"
-              name="vforma"
-              value="egyéni"
-              onChange={(e) => setVforma(e.target.value)}
+              type="text"
+              placeholder="Résztvevő tanuló(k) neve"
+              value={tanulok}
+              className="input"
+              onChange={(e) => setTanulok(e.target.value)}
             />
-            <span className="name">Egyéni</span>
-          </label>
-          <label className="radio">
+          </div>
+          <div className="form-row">
             <input
-              type="radio"
-              name="vforma"
-              value="csapat"
-              onChange={(e) => setVforma(e.target.value)}
+              type="text"
+              placeholder="Tanuló(k) osztálya"
+              value={osztaly}
+              className="input"
+              onChange={(e) => setOsztaly(e.target.value)}
             />
-            <span className="name">Csapat</span>
-          </label>
-        </div>
-        <div className="form-row">
-          <input
-            type="text"
-            placeholder="Elért helyezés"
-            value={helyezes}
-            className="input"
-            onChange={(e) => setHelyezes(e.target.value)}
-          />
-        </div>
-        <div className="form-row">
-          <input
-            type="text"
-            placeholder="Résztvevő tanuló(k) neve"
-            value={tanulok}
-            className="input"
-            onChange={(e) => setTanulok(e.target.value)}
-          />
-        </div>
-        <div className="form-row">
-          <input
-            type="text"
-            placeholder="Tanuló(k) osztálya"
-            value={osztaly}
-            className="input"
-            onChange={(e) => setOsztaly(e.target.value)}
-          />
-        </div>
-        <div className="form-row">
-          <input
-            type="text"
-            placeholder="Felkészítő tanár(ok) neve(i)"
-            className="input"
-            value={tanarok}
-            onChange={(e) => setTanarok(e.target.value)}
-          />
-        </div>
-        <div className="button-row">
-          <button disabled={isLoading} type="submit">
-            Felvesz
-          </button>
-          <button disabled={isLoading} onClick={torles}>
-            Törlés
-          </button>
-        </div>
-        {error && <div className="error">{error}</div>}
-        {success && <div className="success">{success}</div>}
-      </form>
+          </div>
+          <div className="form-row">
+            <input
+              type="text"
+              placeholder="Felkészítő tanár(ok) neve(i)"
+              className="input"
+              value={tanarok}
+              onChange={(e) => setTanarok(e.target.value)}
+            />
+          </div>
+          <div className="button-row">
+            <button disabled={isLoading} type="submit">
+              Felvesz
+            </button>
+            <button disabled={isLoading} onClick={torles}>
+              Törlés
+            </button>
+          </div>
+          {error && <div className="error">{error}</div>}
+          {success && <div className="success">{success}</div>}
+        </form>
+      </div>
     </div>
   );
 }
