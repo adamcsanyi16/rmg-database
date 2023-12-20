@@ -24,11 +24,14 @@ const Results = () => {
   const [itemToDelete, setItemToDelete] = useState(null);
   const { user } = useAuthContext();
   const [isAdmin, setIsAdmin] = useState(false);
+  const [email, setEmail] = useState("");
   const [backToTop, setBackToTop] = useState(false);
   const [dropdownVersenyek, setDropdownVersenyek] = useState([]);
   const [selectedVerseny, setSelectedVerseny] = useState(null);
   const [dropdownAgazatok, setDropdownAgazatok] = useState([]);
   const [selectedAgazat, setSelectedAgazat] = useState(null);
+
+  const [sajatEredmeny, setSajatEredmeny] = useState([]);
 
   const [fromValue, setFromValue] = useState("");
   const [toValue, setToValue] = useState("");
@@ -40,6 +43,7 @@ const Results = () => {
   const [isNemzetkoziChecked, setIsNemzetkoziChecked] = useState(false);
   const [isEgyeniChecked, setIsEgyeniChecked] = useState(false);
   const [isCsapatChecked, setIsCsapatChecked] = useState(false);
+  const [isSajatChecked, setIsSajatChecked] = useState(false);
 
   const [showFilters, setShowFilters] = useState(false);
 
@@ -78,7 +82,9 @@ const Results = () => {
         if (response.ok) {
           const data = await response.json();
           const isAdmin = data.isAdmin;
+          const email = data.email;
           setIsAdmin(isAdmin);
+          setEmail(email);
         } else {
           console.log("Error:", response.status);
         }
@@ -220,6 +226,7 @@ const Results = () => {
     setSelectedAgazat(null);
     setIsEgyeniChecked(false);
     setIsCsapatChecked(false);
+    setIsSajatChecked(false);
     setFromValue("");
     setToValue("");
   };
@@ -259,6 +266,42 @@ const Results = () => {
     data();
   }, [user]);
 
+  useEffect(() => {
+    const data = async () => {
+      setIsLoading(true);
+      setError(null);
+      if (!user) {
+        setError("Nem vagy bejelentkezve!");
+        return;
+      }
+
+      try {
+        const adat = await fetch(url + "/sajatEredmeny", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.token}`,
+          },
+          body: JSON.stringify({ email }),
+        });
+
+        if (adat.ok) {
+          const response = await adat.json();
+          setSajatEredmeny(response.msg);
+          setIsLoading(false);
+        } else {
+          const response = await adat.json();
+          setIsLoading(false);
+          setError(response.msg);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    data();
+  }, [user, url, isSajatChecked == true]);
+
   //SEARCHING
   useEffect(() => {
     const filtered = results.filter((result) => {
@@ -270,7 +313,7 @@ const Results = () => {
       const lowercaseAgazat = result.agazat.toLowerCase();
       const lowercaseVforma = result.vforma.toLowerCase();
       const lowercaseHelyezes = result.helyezes.toLowerCase();
-      const lowercaseTaulok = result.tanulok.toLowerCase();
+      //const lowercaseTaulok = result.tanulok.toLowerCase();
       const lowercaseOsztaly = result.osztaly.toLowerCase();
       const lowercaseTanarok = result.tanarok.toLowerCase();
 
@@ -282,7 +325,7 @@ const Results = () => {
         lowercaseAgazat.includes(lowercaseSearchTerm) ||
         lowercaseVforma.includes(lowercaseSearchTerm) ||
         lowercaseHelyezes.includes(lowercaseSearchTerm) ||
-        lowercaseTaulok.includes(lowercaseSearchTerm) ||
+        //lowercaseTaulok.includes(lowercaseSearchTerm) ||
         lowercaseOsztaly.includes(lowercaseSearchTerm) ||
         lowercaseTanarok.includes(lowercaseSearchTerm);
 
@@ -469,6 +512,7 @@ const Results = () => {
     setShowTokenExpiredModal(false);
   };
 
+  //SAVING TO EXCEL
   const handleExcelSave = () => {
     fetch(url + "/eredmenyMent", {
       method: "POST",
@@ -524,6 +568,23 @@ const Results = () => {
               <span id="reset-btn" onClick={handleResetAll}>
                 Alapértelmezett
               </span>
+              <div className="sajat">
+                <span id="category">Feltöltéseim</span>
+                <div className="checkbox">
+                  <label className="container">
+                    <input
+                      id="sajat"
+                      type="radio"
+                      checked={isSajatChecked}
+                      onChange={(e) => {
+                        setIsSajatChecked(e.target.checked);
+                      }}
+                    />
+                    <div className="checkmark"></div>
+                  </label>
+                  <span>Saját feltöltéseim</span>
+                </div>
+              </div>
               <div className="vtipus">
                 <span id="category">Versenytípus</span>
                 <div className="checkbox">
@@ -723,37 +784,39 @@ const Results = () => {
           {error && <div className="error">{error}</div>}
           <div className="allinfo">
             <div className="table">
-              <table className="styled-table">
-                <thead>
-                  <tr>
-                    {isAdmin && <th>Felvevő email</th>}
-                    <th>Verseny típusa</th>
-                    <th>Verseny szintje</th>
-                    <th>Verseny neve</th>
-                    <th>Ágazat</th>
-                    <th>Verseny formája</th>
-                    <th>Helyezés</th>
-                    <th id="tanulok">Tanulók</th>
-                    <th>Osztály</th>
-                    <th>Felkészítő tanár(ok)</th>
-                    {isAdmin && <th></th>}
-                    {isAdmin && <th></th>}
-                  </tr>
-                </thead>
-                <tbody>
-                  {currentResults.map((result) => (
-                    <tr key={result._id}>
-                      {isAdmin && <td>{result.nev}</td>}
-                      <td>{result.vtipus}</td>
-                      <td>{result.vszint}</td>
-                      <td>{result.verseny}</td>
-                      <td>{result.agazat}</td>
-                      <td>{result.vforma}</td>
-                      <td>{result.helyezes}</td>
-                      <td id="tanulok">{result.tanulok}</td>
-                      <td>{result.osztaly}</td>
-                      <td>{result.tanarok}</td>
-                      {isAdmin && (
+              {isSajatChecked ? (
+                <table className="styled-table">
+                  <thead>
+                    <tr>
+                      <th>Felvevő email</th>
+                      <th>Verseny típusa</th>
+                      <th>Verseny szintje</th>
+                      <th>Verseny neve</th>
+                      <th>Ágazat</th>
+                      <th>Verseny formája</th>
+                      <th>Helyezés</th>
+                      <th colSpan="2" id="tanulok">
+                        Tanulók
+                      </th>
+                      <th>Osztály</th>
+                      <th>Felkészítő tanár(ok)</th>
+                      <th></th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {sajatEredmeny.map((result) => (
+                      <tr key={result._id}>
+                        <td>{result.nev}</td>
+                        <td>{result.vtipus}</td>
+                        <td>{result.vszint}</td>
+                        <td>{result.verseny}</td>
+                        <td>{result.agazat}</td>
+                        <td>{result.vforma}</td>
+                        <td>{result.helyezes}</td>
+                        <td colSpan="2">{result.tanulok}</td>
+                        <td>{result.osztaly}</td>
+                        <td>{result.tanarok}</td>
                         <td>
                           <Link to={"/eredmenyek/" + result._id}>
                             <button className="btn">
@@ -771,8 +834,6 @@ const Results = () => {
                             </button>
                           </Link>
                         </td>
-                      )}
-                      {isAdmin && (
                         <td>
                           <button
                             className="btn"
@@ -793,11 +854,89 @@ const Results = () => {
                             </svg>
                           </button>
                         </td>
-                      )}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <table className="styled-table">
+                  <thead>
+                    <tr>
+                      {isAdmin && <th>Felvevő email</th>}
+                      <th>Verseny típusa</th>
+                      <th>Verseny szintje</th>
+                      <th>Verseny neve</th>
+                      <th>Ágazat</th>
+                      <th>Verseny formája</th>
+                      <th>Helyezés</th>
+                      <th colSpan="2" id="tanulok">
+                        Tanulók
+                      </th>
+                      <th>Osztály</th>
+                      <th>Felkészítő tanár(ok)</th>
+                      {isAdmin && <th></th>}
+                      {isAdmin && <th></th>}
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {currentResults.map((result) => (
+                      <tr key={result._id}>
+                        {isAdmin && <td>{result.nev}</td>}
+                        <td>{result.vtipus}</td>
+                        <td>{result.vszint}</td>
+                        <td>{result.verseny}</td>
+                        <td>{result.agazat}</td>
+                        <td>{result.vforma}</td>
+                        <td>{result.helyezes}</td>
+                        <td colSpan="2">{result.tanulok}</td>
+                        <td>{result.osztaly}</td>
+                        <td>{result.tanarok}</td>
+                        {isAdmin && (
+                          <td>
+                            <Link to={"/eredmenyek/" + result._id}>
+                              <button className="btn">
+                                <svg
+                                  className="icon"
+                                  strokeLinejoin="round"
+                                  strokeLinecap="round"
+                                  fill="none"
+                                  height="24"
+                                  width="24"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                                </svg>
+                              </button>
+                            </Link>
+                          </td>
+                        )}
+                        {isAdmin && (
+                          <td>
+                            <button
+                              className="btn"
+                              onClick={() => deleteId(result._id)}
+                            >
+                              <svg
+                                viewBox="0 0 15 17.5"
+                                height="24"
+                                width="24"
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="icon"
+                              >
+                                <path
+                                  transform="translate(-2.5 -1.25)"
+                                  d="M15,18.75H5A1.251,1.251,0,0,1,3.75,17.5V5H2.5V3.75h15V5H16.25V17.5A1.251,1.251,0,0,1,15,18.75ZM5,5V17.5H15V5Zm7.5,10H11.25V7.5H12.5V15ZM8.75,15H7.5V7.5H8.75V15ZM12.5,2.5h-5V1.25h5V2.5Z"
+                                  id="Fill"
+                                ></path>
+                              </svg>
+                            </button>
+                          </td>
+                        )}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
               <div className="saveButton">
                 <button onClick={handleExcelSave}>Mentés</button>
               </div>

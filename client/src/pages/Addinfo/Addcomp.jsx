@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import Select from "react-select";
+import makeAnimated from "react-select/animated";
 import config from "../../components/config";
 
 function Addcomp() {
-  const [nev, setNev] = useState("");
+  const [email, setEmail] = useState("");
   const [vtipus, setVtipus] = useState("");
   const [vszint, setVszint] = useState("");
   const [verseny, setVerseny] = useState("");
@@ -14,11 +15,15 @@ function Addcomp() {
   const [tanulok, setTanulok] = useState("");
   const [osztaly, setOsztaly] = useState("");
   const [tanarok, setTanarok] = useState("");
+
   const [success, setSuccess] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  const [dropdownTanulok, setDropdownTanulok] = useState([]);
   const [dropdownVersenyek, setDropdownVersenyek] = useState([]);
   const [dropdownAgazatok, setDropdownAgazatok] = useState([]);
+
   const { user } = useAuthContext();
   const url = config.URL;
 
@@ -31,7 +36,7 @@ function Addcomp() {
     }
 
     const adatok = {
-      nev,
+      email,
       vtipus,
       vszint,
       verseny,
@@ -74,9 +79,70 @@ function Addcomp() {
     setOsztaly("");
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(url + "/isAdmin", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.token}`,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const email = data.email;
+          setEmail(email);
+        }
+      } catch (error) {
+        console.log("Fetch error:", error);
+      }
+    };
+
+    fetchData();
+  }, [user, url]);
+
+  //FETCHING TANULOK
+  useEffect(() => {
+    const fetchDropdownTanulok = async () => {
+      setIsLoading(true);
+      setError(null);
+      setSuccess(null);
+
+      try {
+        const adat = await fetch(url + "/student", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.token}`,
+          },
+        });
+
+        if (adat.ok) {
+          const response = await adat.json();
+          const transformedOptions = response.student.map((option) => ({
+            label: option.nev,
+            value: option.nev,
+          }));
+          setIsLoading(false);
+          setDropdownTanulok(transformedOptions);
+        } else {
+          const response = await adat.json();
+          setIsLoading(false);
+          setError(response.msg);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchDropdownTanulok();
+  }, [user, url]);
+
   //FETCHING VERSENYEK
   useEffect(() => {
-    const fetchDropdownOptions = async () => {
+    const fetchDropdownVersenyek = async () => {
       try {
         const adat = await fetch(url + "/verseny", {
           method: "GET",
@@ -95,7 +161,6 @@ function Addcomp() {
           }));
           setIsLoading(false);
           setDropdownVersenyek(transformedOptions);
-          setNev(user.email);
         } else {
           const response = await adat.json();
           setIsLoading(false);
@@ -106,12 +171,12 @@ function Addcomp() {
       }
     };
 
-    fetchDropdownOptions();
-  }, [user]);
+    fetchDropdownVersenyek();
+  }, [user, url]);
 
   //FETCHING AGAZATOK
   useEffect(() => {
-    const fetchDropdownAgaztok = async () => {
+    const fetchDropdownAgazatok = async () => {
       try {
         const adat = await fetch(url + "/agazat", {
           method: "GET",
@@ -137,11 +202,16 @@ function Addcomp() {
       }
     };
 
-    fetchDropdownAgaztok();
-  }, [user.token]);
+    fetchDropdownAgazatok();
+  }, [user.token, url]);
 
-  const handleDropdownChange = (selectedOption) => {
+  const handleVersenyChange = (selectedOption) => {
     setVerseny(selectedOption.value);
+  };
+
+  const handleTanuloChange = (selectedOption) => {
+    const data = selectedOption.map((option) => option.label).join(", ");
+    setTanulok(data);
   };
 
   const handleAgazatChange = (selectedOption) => {
@@ -150,7 +220,6 @@ function Addcomp() {
 
   const torles = async (e) => {
     e.preventDefault();
-    setNev("");
     setVtipus("");
     setVszint("");
     setVerseny("");
@@ -178,7 +247,6 @@ function Addcomp() {
       backgroundColor: "whitesmoke",
       padding: "0.5rem",
       borderRadius: "1rem",
-      outlineColor: state.isFocused ? "#998d33c9" : null,
       borderColor: state.isFocused ? "#998d33c9" : null,
       boxShadow: state.isFocused
         ? "0 0 0 2px rgba(153, 141, 51, 0.3)"
@@ -200,8 +268,11 @@ function Addcomp() {
     singleValue: (provided) => ({
       ...provided,
       color: "#4d471bc9",
+      boxShadow: "none",
     }),
   };
+
+  const animatedComponents = makeAnimated();
 
   return (
     <div className="form-container">
@@ -213,9 +284,10 @@ function Addcomp() {
             <input
               type="text"
               placeholder="Felvevő email címe"
-              value={nev}
+              value={email}
               className="input"
-              onChange={(e) => setNev(e.target.value)}
+              readOnly
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <p>Verseny típusa</p>
@@ -285,7 +357,7 @@ function Addcomp() {
               <Select
                 placeholder="Verseny neve"
                 options={dropdownVersenyek}
-                onChange={handleDropdownChange}
+                onChange={handleVersenyChange}
                 className="custom-select"
                 styles={customSelectStyles}
               />
@@ -333,13 +405,17 @@ function Addcomp() {
             />
           </div>
           <div className="form-row">
-            <input
-              type="text"
-              placeholder="Résztvevő tanuló(k) neve"
-              value={tanulok}
-              className="input"
-              onChange={(e) => setTanulok(e.target.value)}
-            />
+            {dropdownTanulok.length > 0 && (
+              <Select
+                placeholder="Tanuló(k)"
+                options={dropdownTanulok}
+                onChange={handleTanuloChange}
+                className="custom-select"
+                isMulti
+                components={animatedComponents}
+                styles={customSelectStyles}
+              />
+            )}
           </div>
           <div className="form-row">
             <input

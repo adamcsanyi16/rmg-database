@@ -124,9 +124,9 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 //TOKEN CREATION
-const createToken = (_id, isAdmin) => {
-  return jwt.sign({ _id, isAdmin }, process.env.SECRET, {
-    expiresIn: "3h",
+const createToken = (_id, isAdmin, email) => {
+  return jwt.sign({ _id, isAdmin, email }, process.env.SECRET, {
+    expiresIn: "8h",
   });
 };
 
@@ -152,8 +152,7 @@ app.post("/regisztral", async (req, res) => {
     const { email, jelszo, jelszoismetles } = req.body;
     const user = await User.signup(email, jelszo, jelszoismetles);
 
-    const token = createToken(user._id, user.isAdmin);
-    console.log({ email, token });
+    const token = createToken(user._id, user.isAdmin, user.email);
 
     const transporter = nodemailer.createTransport({
       service: process.env.SERVICE,
@@ -190,9 +189,8 @@ app.post("/belepes", async (req, res) => {
   try {
     const { email, jelszo } = req.body;
     const user = await User.login(email, jelszo);
-    const token = createToken(user._id, user.isAdmin);
-    console.log(email, token);
-    res.status(200).json({ msg: "Sikeres belépés", email, token });
+    const token = createToken(user._id, user.isAdmin, user.email);
+    res.status(200).json({ msg: "Sikeres belépés", token });
   } catch (error) {
     res.status(500).json({ msg: error.message });
   }
@@ -202,7 +200,6 @@ app.post("/belepes", async (req, res) => {
 app.post("/emailkuldes", async (req, res) => {
   try {
     const { email } = req.body;
-    console.log(email);
     sendEmail(req.body);
     res.status(200).json({
       msg: `Az azonosító kód el lett küldve a(z) ${email} címre`,
@@ -237,7 +234,7 @@ app.get("/eredmeny", async (req, res) => {
 app.post("/eredmeny", async (req, res) => {
   try {
     const {
-      nev,
+      email,
       vtipus,
       vszint,
       verseny,
@@ -248,9 +245,8 @@ app.post("/eredmeny", async (req, res) => {
       osztaly,
       tanarok,
     } = req.body;
-    console.log(req.body);
     const newRace = new Race({
-      nev,
+      nev: email,
       vtipus,
       vszint,
       verseny,
@@ -354,6 +350,16 @@ app.post("/eredmenyMent", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ msg: "Internal server error" });
+  }
+});
+
+app.post("/sajatEredmeny", async (req, res) => {
+  try {
+    const { email } = req.body;
+    const myEredmeny = await Race.find({ nev: email });
+    res.status(200).json({ msg: myEredmeny });
+  } catch (error) {
+    res.status(500).json({ msg: "Valami hiba történt" + error.message });
   }
 });
 
@@ -465,7 +471,8 @@ app.post("/uploadStudent", upload.single("file"), async (req, res) => {
 app.get("/isAdmin", async (req, res) => {
   try {
     const isAdmin = res.locals.isAdmin;
-    res.status(200).json({ isAdmin });
+    const email = res.locals.email;
+    res.status(200).json({ isAdmin, email });
   } catch (error) {
     res.status(500).json({ msg: "Valami hiba történt: " + error.message });
   }

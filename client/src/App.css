@@ -614,7 +614,7 @@ button:active {
 .styled-table {
   border-collapse: collapse;
   margin: 20px 0;
-  width: 1100px;
+  width: 1200px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
   border-radius: 1rem;
   overflow: hidden;
@@ -626,13 +626,13 @@ button:active {
 }
 
 .styled-table td {
-  font-size: 0.8rem;
-  padding: 8px 11px;
+  font-size: 0.7rem;
+  padding: 6px 6px;
 }
 
 .styled-table th {
-  font-size: 1rem;
-  padding: 8px 11px;
+  font-size: 0.9rem;
+  padding: 8px 8px;
 }
 
 .styled-table tbody tr {
@@ -839,7 +839,8 @@ h2 {
 .vszint,
 .vforma,
 .versenyek,
-.agazatok {
+.agazatok,
+.sajat {
   border-radius: 1rem;
   -webkit-border-radius: 1rem;
   -moz-border-radius: 1rem;
@@ -1016,16 +1017,6 @@ h2 {
   }
 
   /*EREDMENYEK*/
-  .styled-table td {
-    font-size: 0.7rem;
-    padding: 6px 9px;
-  }
-
-  .styled-table th {
-    font-size: 0.9rem;
-    padding: 6px 9px;
-  }
-
   .sorting-container {
     flex-basis: 220px;
     padding: 10px;
@@ -1128,13 +1119,29 @@ h2 {
 
 /*FILE INPUT*/
 .multiAdding {
+  margin-top: 20px;
+  padding: 0.5rem 0.75rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 1rem;
-  padding: 10px;
 }
 
 .multiAdding button {
   scale: 0.8;
+  background-color: #b9ab44c9;
+  color: whitesmoke;
 }
+
+.multiAdding button:hover {
+  background-color: #b9ab44c9;
+  color: whitesmoke;
+}
+
+.authDiv {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+/*INFO*/

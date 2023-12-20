@@ -96,27 +96,27 @@ const Addagazat = () => {
       <div className="agazatContainer">
         {!isLoading ? <div></div> : <div className="loader"></div>}
         <form onSubmit={feldolgoz} className="addcomp">
-        <h2>Vegyél fel egy ágazatot!</h2>
-        <div className="form-row">
-          <input
-            type="text"
-            placeholder="Ágazat neve"
-            value={agazat}
-            className="input"
-            onChange={(e) => setAgazat(e.target.value)}
-          />
-        </div>
-        <div className="button-row">
-          <button disabled={isLoading} type="submit">
-            Felvesz
-          </button>
-          <button disabled={isLoading} onClick={torles}>
-            Törlés
-          </button>
-        </div>
-        {error && <div className="error">{error}</div>}
-        {success && <div className="success">{success}</div>}
-      </form>
+          <h2>Vegyél fel egy ágazatot!</h2>
+          <div className="form-row">
+            <input
+              type="text"
+              placeholder="Ágazat neve"
+              value={agazat}
+              className="input"
+              onChange={(e) => setAgazat(e.target.value)}
+            />
+          </div>
+          <div className="button-row">
+            <button disabled={isLoading} type="submit">
+              Felvesz
+            </button>
+            <button disabled={isLoading} onClick={torles}>
+              Törlés
+            </button>
+          </div>
+          {error && <div className="error">{error}</div>}
+          {success && <div className="success">{success}</div>}
+        </form>
         <div className="multiAdding">
           <input type="file" onChange={handleFileChange} />
           <button onClick={handleUpload}>Feltölt</button>

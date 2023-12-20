@@ -8,6 +8,7 @@ const Navbar = () => {
   const { logout } = useLogout();
   const { user } = useAuthContext();
   const [isAdmin, setIsAdmin] = useState(false);
+  const [email, setEmail] = useState(false);
   const [activeLink, setActiveLink] = useState("");
   const url = config.URL;
 
@@ -25,7 +26,9 @@ const Navbar = () => {
         if (response.ok) {
           const data = await response.json();
           const isAdmin = data.isAdmin;
+          const email = data.email;
           setIsAdmin(isAdmin);
+          setEmail(email);
         }
       } catch (error) {
         console.log("Fetch error:", error);
@@ -98,7 +101,7 @@ const Navbar = () => {
             </Link>
           </div>
           <div className="userinfo">
-            <span>{user.email}</span>
+            <span>{email}</span>
             <button className="logout-btn" onClick={klikk}>
               Kilépés
             </button>

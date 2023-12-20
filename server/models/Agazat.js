@@ -4,7 +4,6 @@ const agazatSchema = new mongoose.Schema(
   {
     agazat: {
       type: String,
-      required: true,
     },
   },
 );
