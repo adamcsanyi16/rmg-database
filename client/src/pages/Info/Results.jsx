@@ -94,7 +94,7 @@ const Results = () => {
     };
 
     fetchData();
-  }, [user]);
+  }, [user,url]);
 
   //FETCHING COMPETITIONS
   useEffect(() => {
@@ -129,7 +129,7 @@ const Results = () => {
     };
 
     fetchDropdownOptions();
-  }, [user.token]);
+  }, [user.token, url]);
 
   //FETCHING AGAZATOK
   useEffect(() => {
@@ -161,7 +161,7 @@ const Results = () => {
     };
 
     fetchDropdownAgazatok();
-  }, [user.token]);
+  }, [user.token, url]);
 
   const customSelectStyles = {
     control: (provided, state) => ({
@@ -264,7 +264,7 @@ const Results = () => {
     };
 
     data();
-  }, [user]);
+  }, [user, url]);
 
   useEffect(() => {
     const data = async () => {
@@ -300,7 +300,7 @@ const Results = () => {
     };
 
     data();
-  }, [user, url, isSajatChecked == true]);
+  }, [user, url, isSajatChecked === true, email]);
 
   //SEARCHING
   useEffect(() => {
